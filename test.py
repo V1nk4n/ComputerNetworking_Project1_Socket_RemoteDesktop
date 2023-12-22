@@ -4,11 +4,44 @@ import pyautogui as pag
 from PIL import Image
 import io
 
-image = pag.screenshot()
-image_byte_array = io.BytesIO()
-image.save(image_byte_array, format='JPEG')
-image_byte_array = image_byte_array.getvalue()
+def recvList(conn):
+    list = []
+    item = conn.recv(1024).decode(FORMAT)
+    
+    while (item != "end"):
+        
+        list.append(item)
+        conn.sendall(item.encode(FORMAT))
+        item = conn.recv(1024).decode(FORMAT)
+        
+    return list
 
-image_byte_io = io.BytesIO(image_byte_array)
-image2 = Image.open(image_byte_io)
-image2.show()
+def handleClient(conn: socket, addr):
+    print("client address: ", addr)
+    print("conn: ", conn.getsockname())
+
+    msg = None
+    while (msg != "x"):
+        msg = conn.recv(1024).decode(FORMAT)
+        print("client ",addr,"says",msg)
+        # msg = input("Server: ")
+        # server.sendall(msg.encode(FORMAT))
+        if (msg == "list"):
+            conn.sendall(msg.encode(FORMAT))
+            list = recvList(conn)
+            
+            print("received: ")
+            print(list)
+            
+            
+    print("client", addr, "finished")   
+    print(conn.getsockname(), "closed")
+    conn.close()
+
+def sendList(client, list):
+    for item in list:
+        client.sendall(item.encode(FORMAT))
+        client.recv(1024)
+        
+    msg = "end"
+    client.send(msg.encode(FORMAT))
