@@ -51,10 +51,10 @@ class RemoteDesktop:
         print("Remote Desktop")
         self.socket.connect((HOST, SERVER_PORT))
         
-        mouseThread = threading.Thread(target= self.MouseControlled, args = self)
+        mouseThread = threading.Thread(target= self.MouseControlled, args = (self,))
         mouseThread.start()
         
-        screenThread = threading.Thread(target= self.LiveScreen, args = self)
+        screenThread = threading.Thread(target= self.LiveScreen, args = (self,))
         screenThread.start()
         
     def MouseControlled(self):

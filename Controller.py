@@ -57,8 +57,7 @@ def on_key(key):
         key_value = key.char
     except:
         key_value = str(key)
-    print({key_value})
-    buffer.append(key_value)
+    
 
 def listen():
     with keyboard.Listener(on_press = on_key) as listener:
@@ -94,10 +93,10 @@ class Controller:
         self.canvas = Canvas(self.window, width=1920, height=1080)
         self.canvas.pack()
         
-        mouseThread = threading.Thread(target = self.MouseControl)
+        mouseThread = threading.Thread(target = MouseControl, args = (self,))
         mouseThread.start()
         
-        screenThread = threading.Thread(target = self.LiveScreen)
+        screenThread = threading.Thread(target = LiveScreen, args = (self,))
         screenThread.start()
         
         self.ConnectSocket()
@@ -152,6 +151,19 @@ class Controller:
         else:
             print("Chua nhan du du lieu")
             return None
+    
+    def on_key(self, key):
+        try:
+            key_value = key.char
+        except:
+            key_value = str(key)
+        self.connection.sendall(key.encode(FORMAT))
+    
+
+    def listen_keyboard():
+        with keyboard.Listener(on_press = on_key) as listener:
+            listener.join()
+    
         
 # s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 # s.bind((HOST, SERVER_PORT))
