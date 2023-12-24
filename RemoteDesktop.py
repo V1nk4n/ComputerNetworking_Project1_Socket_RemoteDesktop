@@ -5,7 +5,7 @@ from PIL import ImageGrab
 import io
 import time
 
-HOST = "10.131.3.147"
+HOST = "127.0.0.1"
 SERVER_PORT = 61000
 FORMAT = "utf8"
 BUFFERSIZE = 1024*1024
@@ -47,19 +47,25 @@ def recvMouse(client):
 
 class RemoteDesktop:
     def __init__(self):
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.sk = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         print("Remote Desktop")
-        self.socket.connect((HOST, SERVER_PORT))
+        self.sk.connect((HOST, SERVER_PORT))
         
-        mouseThread = threading.Thread(target= self.MouseControlled, args = (self,))
-        mouseThread.start()
+        self.mouseThread = None
+        self.screenThread = None
         
-        screenThread = threading.Thread(target= self.LiveScreen, args = (self,))
-        screenThread.start()
+        self.ConnectScreen()
+        self.screenThread.start()
+        
+        self.ConnectMouse()
+        self.mouseThread.start()
+        
+    def ConnectMouse(self):
+        self.mouseThread = threading.Thread(target= self.MouseControlled, args = (self,))    
         
     def MouseControlled(self):
         while True:
-            buffer = self.socket.recv(BUFFERSIZE).decode()
+            buffer = self.sk.recv(BUFFERSIZE).decode()
             if not buffer:
                 break
             command, x, y = buffer.split(",")
@@ -74,9 +80,12 @@ class RemoteDesktop:
             if command == "scroll":
                 pag.scroll(x)
     
+    def ConnectScreen(self):
+        self.screenThread = threading.Thread(target= self.LiveScreen, args = (self,))
+        
     def LiveScreen(self):
         while True:
-            sendImage(self.socket)
+            sendImage(self.sk)
             time.sleep(DELAY) 
     
     def sendImage(client):

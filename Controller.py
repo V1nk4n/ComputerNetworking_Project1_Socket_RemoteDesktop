@@ -77,33 +77,53 @@ def sendMouse(conn):
         conn.sendall(f"{x},{y}".encode())
         time.sleep(1)
     
+# def MouseControl(window):
+#         window.bind("<Motion>", window.move)
+#         window.bind("<Button-1>", window.clickLeft)
+#         window.bind("<Button-3>", window.clickRight)
+#         window.bind("<MouseWheel>", window.scroll)
 
+# def clickLeft(connection, event):
+#     connection.sendall(f"clickLeft,{event.x},{event.y}".encode())
+# def clickRight(connection, event):
+#     connection.sendall(f"clickRight,{event.x},{event.y}".encode())
+# def move(connection, event):
+#     connection.sendall(f"move,{event.x},{event.y}".encode())
+# def scroll(connection, event):
+#     connection.sendall(f"scroll,{event.delta}, 0".encode())
 
 class Controller:
     def __init__(self, window):
         self.window = window
         self.window.title("Remote Desktop Controller")
         
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.socket.bind((HOST, SERVER_PORT))
-        self.socket.listen()
+        self.sk = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.sk.bind((HOST, SERVER_PORT))
+        self.sk.listen()
         print("Controller")
         self.connection = None
-        
+        self.mouseThread = None
+        self.screenThread = None
         self.canvas = Canvas(self.window, width=1920, height=1080)
         self.canvas.pack()
         
-        mouseThread = threading.Thread(target = MouseControl, args = (self,))
-        mouseThread.start()
-        
-        screenThread = threading.Thread(target = LiveScreen, args = (self,))
-        screenThread.start()
-        
         self.ConnectSocket()
         
+        self.ConnectScreen()
+        self.screenThread.start()
+        
+        self.ConnectMouse()
+        self.mouseThread.start()
+        
     def ConnectSocket(self):
-        self.connection, self.address = self.socket.accept()   
-            
+        self.connection, self.address = self.sk.accept()   
+    
+    def ConnectMouse(self):
+        self.mouseThread = threading.Thread(target = self.MouseControl, args = (self,))
+
+    def ConnectScreen(self):
+        self.screenThread = threading.Thread(target = self.LiveScreen, args = (self,))
+ 
     def MouseControl(self):
         self.window.bind("<Motion>", self.move)
         self.window.bind("<Button-1>", self.clickLeft)
@@ -120,7 +140,8 @@ class Controller:
         self.connection.sendall(f"scroll,{event.delta}, 0".encode())
     
     def LiveScreen(self):
-       self.updateScreen()
+        while True:
+            self.updateScreen()
             
     def updateScreen(self):
         image = self.recvImage(self)
