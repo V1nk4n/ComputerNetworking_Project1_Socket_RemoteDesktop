@@ -15,49 +15,6 @@ BUFFERSIZE = 1024*1024
 DELAY = 0.0001
    
     
-# def recvImage(conn):
-#     length_bytes = conn.recv(4)
-#     image_length = int.from_bytes(length_bytes)
-    
-#     image_byte_array = b""
-#     remaining_length = image_length
-#     while remaining_length > 0:
-#             chunk = conn.recv(min(BUFFERSIZE, remaining_length))
-#             if not chunk:
-#                 break
-#             image_byte_array += chunk
-#             remaining_length -= len(chunk)
-
-
-#     if len(image_byte_array) == image_length:
-#         image_byte_io = io.BytesIO(image_byte_array)
-#         image = Image.open(image_byte_io)
-#         return image
-#     else:
-#         print("Chua nhan du du lieu")
-#         return None
-
-def recvLiveScreen(conn, window):
-    
-    canvas = Canvas(window, width=1920, height=1080) #Canvas cho phep ve len cua so
-    canvas.pack() #Them canvas vao Tk
-    
-    while True:
-        image = recvImage(conn)
-        if image:
-            photo = ImageTk.PhotoImage(image)
-            canvas.create_image(0, 0, anchor=tk.NW, image=photo)
-            window.update()
-      
-global buffer
-buffer = []
-
-def on_key(key):
-    try:
-        key_value = key.char
-    except:
-        key_value = str(key)
-    
 
 def listen():
     with keyboard.Listener(on_press = on_key) as listener:
@@ -77,20 +34,6 @@ def sendMouse(conn):
         conn.sendall(f"{x},{y}".encode())
         time.sleep(1)
     
-# def MouseControl(window):
-#         window.bind("<Motion>", window.move)
-#         window.bind("<Button-1>", window.clickLeft)
-#         window.bind("<Button-3>", window.clickRight)
-#         window.bind("<MouseWheel>", window.scroll)
-
-# def clickLeft(connection, event):
-#     connection.sendall(f"clickLeft,{event.x},{event.y}".encode())
-# def clickRight(connection, event):
-#     connection.sendall(f"clickRight,{event.x},{event.y}".encode())
-# def move(connection, event):
-#     connection.sendall(f"move,{event.x},{event.y}".encode())
-# def scroll(connection, event):
-#     connection.sendall(f"scroll,{event.delta}, 0".encode())
 
 class Controller:
     def __init__(self, window):
@@ -101,68 +44,83 @@ class Controller:
         self.sk.bind((HOST, SERVER_PORT))
         self.sk.listen()
         print("Controller")
-        self.connection = None
-        self.mouseThread = None
-        self.screenThread = None
+        
         self.canvas = Canvas(self.window, width=1920, height=1080)
         self.canvas.pack()
         
-        self.ConnectSocket()
+        self.screenConnection = None
+        self.screenAddr = None
+        self.screenThread = None
         
-        self.ConnectScreen()
+        self.mouseConnection = None
+        self.mouseAddr = None
+        self.mouseThread = None
+        
+        
+
+        self.screenConnection, self.screenAddr = self.ConnectScreen()
+        self.screenThread = threading.Thread(target = self.LiveScreen)
         self.screenThread.start()
         
-        self.ConnectMouse()
+        self.mouseConnection, self.mouseAddr = self.ConnectMouse()
+        self.mouseThread = threading.Thread(target = self.MouseControl)
         self.mouseThread.start()
         
-    def ConnectSocket(self):
-        self.connection, self.address = self.sk.accept()   
+    def ConnectScreen(self):
+        return self.sk.accept()
     
     def ConnectMouse(self):
-        self.mouseThread = threading.Thread(target = self.MouseControl, args = (self,))
+        return self.sk.accept()
+    
 
-    def ConnectScreen(self):
-        self.screenThread = threading.Thread(target = self.LiveScreen, args = (self,))
- 
     def MouseControl(self):
         self.window.bind("<Motion>", self.move)
         self.window.bind("<Button-1>", self.clickLeft)
         self.window.bind("<Button-3>", self.clickRight)
         self.window.bind("<MouseWheel>", self.scroll)
+        # while self.mouseConnection:
+        #     window.update_idletasks()
+        #     time.sleep(2*DELAY)
         
     def clickLeft(self, event):
-        self.connection.sendall(f"clickLeft,{event.x},{event.y}".encode())
+        self.mouseConnection.sendall(f"clickLeft,{event.x},{event.y}".encode())
     def clickRight(self, event):
-        self.connection.sendall(f"clickRight,{event.x},{event.y}".encode())
+        self.mouseConnection.sendall(f"clickRight,{event.x},{event.y}".encode())
     def move(self, event):
-        self.connection.sendall(f"move,{event.x},{event.y}".encode())
+        self.mouseConnection.sendall(f"move,{event.x},{event.y}".encode())
     def scroll(self, event):
-        self.connection.sendall(f"scroll,{event.delta}, 0".encode())
+        self.mouseConnection.sendall(f"scroll,{event.delta},0".encode())
     
     def LiveScreen(self):
-        while True:
-            self.updateScreen()
+        while self.screenConnection:
+            length_bytes = self.screenConnection.recv(4)
+            image_length = int.from_bytes(length_bytes)
+        
+            image_byte_array = b""
+            while len(image_byte_array) < image_length:
+                    buffer = self.screenConnection.recv(BUFFERSIZE)
+                    if not buffer:
+                        break
+                    image_byte_array += buffer
+
+            image_byte_io = io.BytesIO(image_byte_array)
+            image = Image.open(image_byte_io) 
+            photo = ImageTk.PhotoImage(image)
+            self.canvas.create_image(0, 0, anchor=tk.NW, image=photo)
+            self.window.update_idletasks()
             
-    def updateScreen(self):
-        image = self.recvImage(self)
-        if image:
-                photo = ImageTk.PhotoImage(image)
-                self.canvas.create_image(0, 0, anchor=tk.NW, image=photo)
-                window.update()
-                self.window.after(10, self.update_screen)
+                    
                 
     def recvImage(self):
         length_bytes = self.connection.recv(4)
         image_length = int.from_bytes(length_bytes)
         
         image_byte_array = b""
-        remaining_length = image_length
-        while remaining_length > 0:
-                chunk = self.connection.recv(min(BUFFERSIZE, remaining_length))
-                if not chunk:
+        while len(image_byte_array) < length_bytes:
+                buffer = self.connection.recv(BUFFERSIZE)
+                if not buffer:
                     break
-                image_byte_array += chunk
-                remaining_length -= len(chunk)
+                image_byte_array += buffer
 
 
         if len(image_byte_array) == image_length:
@@ -197,7 +155,6 @@ try:
     window = tk.Tk()
     App = Controller(window)
     window.mainloop()
-
 except:
     print("Error")
 

@@ -47,57 +47,57 @@ def recvMouse(client):
 
 class RemoteDesktop:
     def __init__(self):
-        self.sk = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         print("Remote Desktop")
-        self.sk.connect((HOST, SERVER_PORT))
-        
-        self.mouseThread = None
-        self.screenThread = None
-        
+        self.screenConnection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.ConnectScreen()
+        self.screenThread = threading.Thread(target= self.LiveScreen)
         self.screenThread.start()
         
+        self.mouseConnection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.ConnectMouse()
+        self.mouseThread = threading.Thread(target= self.MouseControlled)
         self.mouseThread.start()
+    
+    def ConnectScreen(self):
+        self.screenConnection.connect((HOST, SERVER_PORT))
         
+    def LiveScreen(self):
+        while self.screenConnection:
+            image = ImageGrab.grab()
+            image_byte_array = io.BytesIO()
+            image.save(image_byte_array, format='JPEG')
+            image_byte_array = image_byte_array.getvalue()
+            
+            self.screenConnection.sendall(len(image_byte_array).to_bytes(4))
+            self.screenConnection.sendall(image_byte_array)
+            
+            time.sleep(DELAY) 
+       
     def ConnectMouse(self):
-        self.mouseThread = threading.Thread(target= self.MouseControlled, args = (self,))    
+        self.mouseConnection.connect((HOST, SERVER_PORT))
         
     def MouseControlled(self):
         while True:
-            buffer = self.sk.recv(BUFFERSIZE).decode()
+            buffer = self.mouseConnection.recv(19).decode()
             if not buffer:
                 break
             command, x, y = buffer.split(",")
             if command == "clickLeft":
                 button = 'left'
-                pag.click(x, y,button)
+                print(buffer)
+                # pag.click(x, y,button)
             if command == "clickRight":
                 button = 'right'
-                pag.click(x, y, button)
+                print(buffer)
+                # pag.click(x, y, button)
             if command == "move":
-                pag.moveTo(x,y)
+                print(buffer)
+                # pag.moveTo(x,y)
             if command == "scroll":
-                pag.scroll(x)
-    
-    def ConnectScreen(self):
-        self.screenThread = threading.Thread(target= self.LiveScreen, args = (self,))
-        
-    def LiveScreen(self):
-        while True:
-            sendImage(self.sk)
-            time.sleep(DELAY) 
-    
-    def sendImage(client):
-        image = pag.screenshot()
-        image_byte_array = io.BytesIO()
-        image.save(image_byte_array, format='JPEG')
-        image_byte_array = image_byte_array.getvalue()
-        
-        client.sendall(len(image_byte_array).to_bytes(4))
-        for i in range(0, len(image_byte_array), BUFFERSIZE):
-            client.sendall(image_byte_array[i:i+BUFFERSIZE])
-                
+                print(buffer)
+                # pag.scroll(x)
+            buffer = ""
+                   
 
 #main
 try:
