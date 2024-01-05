@@ -35,7 +35,7 @@ def sendMouse(conn):
         time.sleep(1)
     
 
-class Controller:
+class DesktopController:
     def __init__(self, window):
         self.window = window
         self.window.title("Remote Desktop Controller")
@@ -58,13 +58,17 @@ class Controller:
         
         
 
-        self.screenConnection, self.screenAddr = self.ConnectScreen()
+        self.screenConnection, self.screenAddr = self.sk.accept()
         self.screenThread = threading.Thread(target = self.LiveScreen)
         self.screenThread.start()
         
-        self.mouseConnection, self.mouseAddr = self.ConnectMouse()
-        self.mouseThread = threading.Thread(target = self.MouseControl)
-        self.mouseThread.start()
+        self.keyConnection, self.keyAddr = self.sk.accept()
+        self.keyThread = threading.Thread(target = self.KeyControl)
+        self.keyThread.start()
+        
+        # self.mouseConnection, self.mouseAddr = self.sk.accept()
+        # self.mouseThread = threading.Thread(target = self.MouseControl)
+        # self.mouseThread.start()
         
     def ConnectScreen(self):
         return self.sk.accept()
@@ -72,22 +76,33 @@ class Controller:
     def ConnectMouse(self):
         return self.sk.accept()
     
-
+# while self.mouseConnection:
+        #     window.update_idletasks()
+        #     time.sleep(2*DELAY)
+        
+    def KeyControl(self):
+        self.window.bind("<Key>", self.press)
+    
+    def press(self, event):
+        key = event.char
+        self.keyConnection.sendall(f"{key}".encode())
+    
     def MouseControl(self):
         self.window.bind("<Motion>", self.move)
         self.window.bind("<Button-1>", self.clickLeft)
         self.window.bind("<Button-3>", self.clickRight)
         self.window.bind("<MouseWheel>", self.scroll)
-        # while self.mouseConnection:
-        #     window.update_idletasks()
-        #     time.sleep(2*DELAY)
         
     def clickLeft(self, event):
-        self.mouseConnection.sendall(f"clickLeft,{event.x},{event.y}".encode())
+        buffer = f"clickLeft,{event.x},{event.y},"
+        self.mouseConnection.sendall(buffer.encode())
     def clickRight(self, event):
         self.mouseConnection.sendall(f"clickRight,{event.x},{event.y}".encode())
     def move(self, event):
-        self.mouseConnection.sendall(f"move,{event.x},{event.y}".encode())
+        buffer = f"move,{event.x},{event.y},"
+        print(buffer)
+        self.mouseConnection.sendall(buffer.encode())
+        buffer =""
     def scroll(self, event):
         self.mouseConnection.sendall(f"scroll,{event.delta},0".encode())
     
@@ -153,7 +168,7 @@ class Controller:
 
 try:
     window = tk.Tk()
-    App = Controller(window)
+    App = DesktopController(window)
     window.mainloop()
 except:
     print("Error")

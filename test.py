@@ -58,9 +58,5 @@ def scroll(event):
     print(f"scroll,{event.delta}, 0")
 
     
-event_x = 1223  # Thay bằng giá trị nguyên cụ thể của event.x
-event_y = 4256  # Thay bằng giá trị nguyên cụ thể của event.y
+window = tk.Tk()
 
-message = f"clickLeft,{event_x},{event_y}"
-length_in_bytes = len(message.encode('utf-8'))
-print(f"Độ dài của chuỗi là: {length_in_bytes} bytes")

@@ -48,16 +48,34 @@ def recvMouse(client):
 class RemoteDesktop:
     def __init__(self):
         print("Remote Desktop")
+        
         self.screenConnection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.ConnectScreen()
-        self.screenThread = threading.Thread(target= self.LiveScreen)
+        self.screenThread = threading.Thread(target = self.LiveScreen)
         self.screenThread.start()
         
-        self.mouseConnection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.ConnectMouse()
-        self.mouseThread = threading.Thread(target= self.MouseControlled)
-        self.mouseThread.start()
+        self.keyConnection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.ConnectKey()
+        self.keyThread = threading.Thread(target = self.KeyControlled)
+        self.keyThread.start()
+        
+        # self.mouseConnection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        # self.ConnectMouse()
+        # self.mouseThread = threading.Thread(target = self.MouseControlled)
+        # self.mouseThread.start()
     
+    def ConnectKey(self):
+        self.keyConnection.connect((HOST, SERVER_PORT))
+        
+    def KeyControlled(self):
+        while True:
+            buffer = self.keyConnection.recv(BUFFERSIZE).decode()
+            
+            if not buffer:
+                break
+            
+            print(buffer)
+        
     def ConnectScreen(self):
         self.screenConnection.connect((HOST, SERVER_PORT))
         
@@ -78,10 +96,13 @@ class RemoteDesktop:
         
     def MouseControlled(self):
         while True:
-            buffer = self.mouseConnection.recv(19).decode()
+            buffer = self.mouseConnection.recv(BUFFERSIZE).decode()
+            
             if not buffer:
                 break
+            
             command, x, y = buffer.split(",")
+            
             if command == "clickLeft":
                 button = 'left'
                 print(buffer)
@@ -96,7 +117,8 @@ class RemoteDesktop:
             if command == "scroll":
                 print(buffer)
                 # pag.scroll(x)
-            buffer = ""
+
+            buffer.clear()
                    
 
 #main
