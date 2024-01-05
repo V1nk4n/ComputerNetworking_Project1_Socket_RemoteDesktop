@@ -59,4 +59,9 @@ def scroll(event):
 
     
 window = tk.Tk()
-
+# s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+# s.bind((HOST, SERVER_PORT))
+# s.listen()
+# print("SERVER SIDE")
+# print("server: ", HOST, SERVER_PORT)
+# print("Waiting for Client")

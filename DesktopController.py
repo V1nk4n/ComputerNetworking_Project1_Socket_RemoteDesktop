@@ -12,162 +12,122 @@ HOST = "127.0.0.1"
 SERVER_PORT = 61000
 FORMAT = "utf8"
 BUFFERSIZE = 1024*1024
-DELAY = 0.0001
-   
-    
-
-def listen():
-    with keyboard.Listener(on_press = on_key) as listener:
-        listener.join()
-    
-def sendKey(conn):
-    listen()
-    while True:
-        conn.sendall(buffer.encode(FORMAT))
-        buffer = " "
-
-def sendMouse(conn):
-    while True:
-        x, y = pag.position()
-        # x = root.winfo_pointerx()
-        # y = root.winfo_pointery()
-        conn.sendall(f"{x},{y}".encode())
-        time.sleep(1)
-    
+DELAY = 0.0001  
 
 class DesktopController:
+    # Hàm khởi tạo
     def __init__(self, window):
+        # Gán cửa sổ đã tạo ở main cho self.window
         self.window = window
+        # Đặt tên cho cửa sổ
         self.window.title("Remote Desktop Controller")
         
+        # Tạo 1 socket để nhận kết nối
         self.sk = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sk.bind((HOST, SERVER_PORT))
         self.sk.listen()
         print("Controller")
         
+        # canvas dùng để vẽ lên cửa sổ -> chuẩn bị cho livescreen
         self.canvas = Canvas(self.window, width=1920, height=1080)
         self.canvas.pack()
         
+        # Khởi tạo socket (Connection), địa chỉ (Addr) (Cái này không sử dụng chỉ truyền cho đủ tham số của hàm accept của socket),
+        # luồng (Thread) để truyền chuột, bàn phím, màn hình
         self.screenConnection = None
         self.screenAddr = None
         self.screenThread = None
+        
+        self.keyConnection = None
+        self.keyAddr = None
+        self.keyThread = None
         
         self.mouseConnection = None
         self.mouseAddr = None
         self.mouseThread = None
         
-        
-
+        #Thiết lập socket chấp nhận kết nối để nhận màn hình từ máy Remote
         self.screenConnection, self.screenAddr = self.sk.accept()
+        #Thiết lập luồng để truyền màn hình với hàm xử lý LiveScreen
+        #self.LiveScreen = LiveScreen(self) (OOP)
         self.screenThread = threading.Thread(target = self.LiveScreen)
+        #.start là để bắt đầu luồng
         self.screenThread.start()
         
+        #Tương tự dành cho bàn phím
         self.keyConnection, self.keyAddr = self.sk.accept()
         self.keyThread = threading.Thread(target = self.KeyControl)
         self.keyThread.start()
         
+        #Hàm chuột đang lỗi
         # self.mouseConnection, self.mouseAddr = self.sk.accept()
         # self.mouseThread = threading.Thread(target = self.MouseControl)
         # self.mouseThread.start()
-        
-    def ConnectScreen(self):
-        return self.sk.accept()
     
-    def ConnectMouse(self):
-        return self.sk.accept()
-    
-# while self.mouseConnection:
-        #     window.update_idletasks()
-        #     time.sleep(2*DELAY)
+    def LiveScreen(self):
+        while self.screenConnection:
+            #Nhận chiều dài của hình ảnh ở kiểu byte
+            length_bytes = self.screenConnection.recv(4)
+            #Độ dài của hình ảnh ở kiểu int
+            length_ints = int.from_bytes(length_bytes)
         
+            #Khởi tạo 1 mảng chứa hình ảnh ở kiểu byte
+            image_byte_array = b""
+            while len(image_byte_array) < length_ints:
+                    buffer = self.screenConnection.recv(BUFFERSIZE)
+                    if not buffer:
+                        break
+                    image_byte_array += buffer
+
+            #Tạo 1 BytesIO cho phép đọc dữ liệu dạng byte
+            image_byte_io = io.BytesIO(image_byte_array)
+            #Mở hình ảnh
+            image = Image.open(image_byte_io)
+            #Tạo đối tượng PhotoImage để đưa lên window
+            photo = ImageTk.PhotoImage(image)
+            #Đưa hình ảnh lên canvas đã tạo ở __init__
+            self.canvas.create_image(0, 0, anchor=tk.NW, image=photo)
+            #Cập nhật liên tục
+            self.window.update_idletasks()
+                                    
     def KeyControl(self):
+        #Lắng nghe bàn phím
         self.window.bind("<Key>", self.press)
     
     def press(self, event):
+        #Truyền phím nhập
         key = event.char
         self.keyConnection.sendall(f"{key}".encode())
     
     def MouseControl(self):
+        #Lắng nghe chuột
         self.window.bind("<Motion>", self.move)
         self.window.bind("<Button-1>", self.clickLeft)
         self.window.bind("<Button-3>", self.clickRight)
         self.window.bind("<MouseWheel>", self.scroll)
         
     def clickLeft(self, event):
+        #Nhấn bên trái
         buffer = f"clickLeft,{event.x},{event.y},"
         self.mouseConnection.sendall(buffer.encode())
     def clickRight(self, event):
+        #Nhấn bên phải
         self.mouseConnection.sendall(f"clickRight,{event.x},{event.y}".encode())
     def move(self, event):
+        #Di chuyển chuột
         buffer = f"move,{event.x},{event.y},"
         print(buffer)
         self.mouseConnection.sendall(buffer.encode())
         buffer =""
     def scroll(self, event):
+        #Cuộn chuột
         self.mouseConnection.sendall(f"scroll,{event.delta},0".encode())
-    
-    def LiveScreen(self):
-        while self.screenConnection:
-            length_bytes = self.screenConnection.recv(4)
-            image_length = int.from_bytes(length_bytes)
-        
-            image_byte_array = b""
-            while len(image_byte_array) < image_length:
-                    buffer = self.screenConnection.recv(BUFFERSIZE)
-                    if not buffer:
-                        break
-                    image_byte_array += buffer
-
-            image_byte_io = io.BytesIO(image_byte_array)
-            image = Image.open(image_byte_io) 
-            photo = ImageTk.PhotoImage(image)
-            self.canvas.create_image(0, 0, anchor=tk.NW, image=photo)
-            self.window.update_idletasks()
-            
-                    
-                
-    def recvImage(self):
-        length_bytes = self.connection.recv(4)
-        image_length = int.from_bytes(length_bytes)
-        
-        image_byte_array = b""
-        while len(image_byte_array) < length_bytes:
-                buffer = self.connection.recv(BUFFERSIZE)
-                if not buffer:
-                    break
-                image_byte_array += buffer
-
-
-        if len(image_byte_array) == image_length:
-            image_byte_io = io.BytesIO(image_byte_array)
-            image = Image.open(image_byte_io)
-            return image
-        else:
-            print("Chua nhan du du lieu")
-            return None
-    
-    def on_key(self, key):
-        try:
-            key_value = key.char
-        except:
-            key_value = str(key)
-        self.connection.sendall(key.encode(FORMAT))
-    
-
-    def listen_keyboard():
-        with keyboard.Listener(on_press = on_key) as listener:
-            listener.join()
-    
-        
-# s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-# s.bind((HOST, SERVER_PORT))
-# s.listen()
-# print("SERVER SIDE")
-# print("server: ", HOST, SERVER_PORT)
-# print("Waiting for Client")
-
+ 
+#main   
 try:
+    # Tạo cửa sổ ứng dụng
     window = tk.Tk()
+    # Khởi động ứng dụng
     App = DesktopController(window)
     window.mainloop()
 except:
