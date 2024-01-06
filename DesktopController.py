@@ -7,12 +7,14 @@ import tkinter as tk
 from tkinter import Label, Canvas
 from pynput import keyboard 
 import time
+from uuid import getnode as get_mac
+
 
 HOST = "127.0.0.1"
 SERVER_PORT = 61000
 FORMAT = "utf8"
 BUFFERSIZE = 1024*1024
-DELAY = 0.0001  
+DELAY = 10
 
 class DesktopController:
     # Hàm khởi tạo
@@ -46,7 +48,7 @@ class DesktopController:
         self.mouseAddr = None
         self.mouseThread = None
         
-        #Thiết lập socket chấp nhận kết nối để nhận màn hình từ máy Remote
+        # Thiết lập socket chấp nhận kết nối để nhận màn hình từ máy Remote
         self.screenConnection, self.screenAddr = self.sk.accept()
         #Thiết lập luồng để truyền màn hình với hàm xử lý LiveScreen
         #self.LiveScreen = LiveScreen(self) (OOP)
@@ -60,9 +62,18 @@ class DesktopController:
         self.keyThread.start()
         
         #Hàm chuột đang lỗi
-        # self.mouseConnection, self.mouseAddr = self.sk.accept()
-        # self.mouseThread = threading.Thread(target = self.MouseControl)
-        # self.mouseThread.start()
+        self.mouseConnection, self.mouseAddr = self.sk.accept()
+        self.mouseThread = threading.Thread(target = self.MouseControl)
+        self.mouseThread.start()
+        
+        self.MacConnection = None
+        self.MacAddr = None
+        self.MacThread = None
+        
+        self.MacConnection, self.MacAddr = self.sk.accept()
+        self.MacThread = threading.Thread(target = self.MacAd)
+        self.MacThread.start()
+   
     
     def LiveScreen(self):
         while self.screenConnection:
@@ -96,8 +107,10 @@ class DesktopController:
     
     def press(self, event):
         #Truyền phím nhập
-        key = event.char
-        self.keyConnection.sendall(f"{key}".encode())
+        buffer = event.char
+        self.keyConnection.sendall(buffer.encode(FORMAT))
+        buffer = self.keyConnection.recv(BUFFERSIZE).decode()
+        buffer =""
     
     def MouseControl(self):
         #Lắng nghe chuột
@@ -105,23 +118,39 @@ class DesktopController:
         self.window.bind("<Button-1>", self.clickLeft)
         self.window.bind("<Button-3>", self.clickRight)
         self.window.bind("<MouseWheel>", self.scroll)
+        # self.window.update_idletasks()
         
     def clickLeft(self, event):
         #Nhấn bên trái
-        buffer = f"clickLeft,{event.x},{event.y},"
+        buffer = f"clickLeft,{event.x},{event.y}"
         self.mouseConnection.sendall(buffer.encode())
+        buffer = self.mouseConnection.recv(BUFFERSIZE).decode()
+        buffer =""
     def clickRight(self, event):
         #Nhấn bên phải
-        self.mouseConnection.sendall(f"clickRight,{event.x},{event.y}".encode())
+        buffer = f"clickRight,{event.x},{event.y}"
+        self.mouseConnection.sendall(buffer.encode())
+        buffer = self.mouseConnection.recv(BUFFERSIZE).decode()
+        buffer =""
     def move(self, event):
         #Di chuyển chuột
-        buffer = f"move,{event.x},{event.y},"
+        buffer = f"move,{event.x},{event.y}"
         print(buffer)
         self.mouseConnection.sendall(buffer.encode())
+        buffer = self.mouseConnection.recv(BUFFERSIZE).decode()
         buffer =""
     def scroll(self, event):
         #Cuộn chuột
-        self.mouseConnection.sendall(f"scroll,{event.delta},0".encode())
+        buffer = f"move,{event.x},{event.y}"
+        self.mouseConnection.sendall(buffer.encode())
+        buffer = self.mouseConnection.recv(BUFFERSIZE).decode()
+        buffer =""
+        
+    def MacAd(self):
+        result = self.MacConnection.recv(BUFFERSIZE).decode(FORMAT)
+        result = result[2:].upper()
+        result = ':'.join(result[i:i + 2] for i in range(0, len(result), 2))
+        print(result)
  
 #main   
 try:

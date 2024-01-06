@@ -57,8 +57,15 @@ def clickRight(event):
 def scroll(event):
     print(f"scroll,{event.delta}, 0")
 
-    
+def press(event):
+        #Truyền phím nhập
+        buffer = event.char
+        print(buffer)
+     
 window = tk.Tk()
+window.bind("<Key>", press)
+window.mainloop
+input()
 # s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 # s.bind((HOST, SERVER_PORT))
 # s.listen()
