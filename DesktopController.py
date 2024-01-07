@@ -23,11 +23,7 @@ class DesktopController:
         self.window = window
         # Đặt tên cho cửa sổ
         self.window.title("Remote Desktop Controller")
-        
-        # Tạo 1 socket để nhận kết nối
-        self.sk = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.sk.bind((HOST, SERVER_PORT))
-        self.sk.listen()
+
         print("Controller")
         
         # canvas dùng để vẽ lên cửa sổ -> chuẩn bị cho livescreen
@@ -36,41 +32,29 @@ class DesktopController:
         
         # Khởi tạo socket (Connection), địa chỉ (Addr) (Cái này không sử dụng chỉ truyền cho đủ tham số của hàm accept của socket),
         # luồng (Thread) để truyền chuột, bàn phím, màn hình
-        self.screenConnection = None
-        self.screenAddr = None
-        self.screenThread = None
         
-        self.keyConnection = None
-        self.keyAddr = None
-        self.keyThread = None
-        
-        self.mouseConnection = None
-        self.mouseAddr = None
-        self.mouseThread = None
-        
-        # Thiết lập socket chấp nhận kết nối để nhận màn hình từ máy Remote
-        self.screenConnection, self.screenAddr = self.sk.accept()
-        #Thiết lập luồng để truyền màn hình với hàm xử lý LiveScreen
-        #self.LiveScreen = LiveScreen(self) (OOP)
+        #Thiết lập socket để truyền màn hình
+        self.screenConnection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        #Lệnh connect để kết nối tới socket screenConnection ở máy Controller
+        self.screenConnection.connect((HOST, SERVER_PORT))
+        #Tạo luồng LiveScreen
         self.screenThread = threading.Thread(target = self.LiveScreen)
-        #.start là để bắt đầu luồng
+        #.start() để bắt đầu luồng màn hình
         self.screenThread.start()
         
-        #Tương tự dành cho bàn phím
-        self.keyConnection, self.keyAddr = self.sk.accept()
+        #Tương tự
+        self.keyConnection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.keyConnection.connect((HOST, SERVER_PORT))
         self.keyThread = threading.Thread(target = self.KeyControl)
         self.keyThread.start()
         
-        #Hàm chuột đang lỗi
-        self.mouseConnection, self.mouseAddr = self.sk.accept()
+        self.mouseConnection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.mouseConnection.connect((HOST, SERVER_PORT))
         self.mouseThread = threading.Thread(target = self.MouseControl)
         self.mouseThread.start()
         
-        self.MacConnection = None
-        self.MacAddr = None
-        self.MacThread = None
-        
-        self.MacConnection, self.MacAddr = self.sk.accept()
+        self.MacConnection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.MacConnection.connect((HOST, SERVER_PORT))
         self.MacThread = threading.Thread(target = self.MacAd)
         self.MacThread.start()
    
