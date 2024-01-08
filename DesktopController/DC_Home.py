@@ -57,17 +57,17 @@ class HomePageUI(Frame):
         self.button_directoryTree.place(x=80, y=280, width=200, height=60)
 
         # button - app process
-        self.button_app_process = Button(
+        self.button_control = Button(
             self,
             borderwidth=0,
-            text="App Process",
+            text="Control",
             bg="#fdebd3",
             fg="black",
             font="Calibri 15",
             highlightthickness=0,
             relief="flat",
         )
-        self.button_app_process.place(x=420, y=80, width=200, height=60)
+        self.button_control.place(x=420, y=80, width=200, height=60)
 
         # button - registry
         self.button_registry = Button(

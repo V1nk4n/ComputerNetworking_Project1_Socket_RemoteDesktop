@@ -6,13 +6,11 @@ from tkinter.ttk import *
 from DC_Home import HomePageUI
 from DC_Login import LoginPageUI
 from DC_Screen import DesktopUI
-
-
-HOST = "127.0.0.1"
-SERVER_PORT = 61000
+from DC_Control import Control
+from Constant import FORMAT, HOST, SERVER_PORT
 
 # global variables
-CommunicationConnection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+com_con = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 window = Tk()
 window.configure(bg="#000")
@@ -24,11 +22,11 @@ frame_login = LoginPageUI(window)
 def back(temp):
     temp.destroy()
     frame_hp.tkraise()
-    CommunicationConnection.sendall(bytes("QUIT", "utf8"))
+    com_con.sendall(bytes("QUIT", "utf8"))
 
 
 def live_screen():
-    CommunicationConnection.sendall(bytes("LIVESCREEN", "utf8"))
+    com_con.sendall("LIVESCREEN".encode(FORMAT))
     screen_con = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     screen_con.connect((HOST,SERVER_PORT))
     temp = DesktopUI(window, screen_con)
@@ -38,29 +36,36 @@ def live_screen():
 
 
 def mac_address():
-    CommunicationConnection.sendall(bytes("MAC", "utf8"))
+    com_con.sendall(bytes("MAC", "utf8"))
     # mac.mac_address(client)
     return
 
 
 def disconnect():
-    CommunicationConnection.sendall(bytes("QUIT", "utf8"))
+    com_con.sendall(bytes("QUIT", "utf8"))
     frame_hp.destroy()
     window.destroy()
     return
 
 
 def keylogger():
-    CommunicationConnection.sendall(bytes("KEYLOG", "utf8"))
+    com_con.sendall(bytes("KEYLOG", "utf8"))
     # temp = kl.KeyloggerUI(window, client)
     # temp.button_back.configure(command=lambda: back(temp))
     return
 
 
-def app_process():
-    CommunicationConnection.sendall(bytes("APP_PRO", "utf8"))
-    # temp = ap.AppProcessUI(window, client)
-    # temp.button_back.configure(command=lambda: back(temp))
+def control():
+    com_con.sendall("CONTROL".encode(FORMAT))
+    screen_con = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    screen_con.connect((HOST,SERVER_PORT))
+    key_con = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    key_con.connect((HOST,SERVER_PORT))
+    mouse_con = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    mouse_con.connect((HOST,SERVER_PORT))
+    temp = Control(window, com_con, screen_con, key_con, mouse_con)
+    if temp.status == False:
+        back(temp)
     return
 
 
@@ -71,21 +76,21 @@ def back_reg(temp):
 
 
 def directory_tree():
-    CommunicationConnection.sendall(bytes("DIRECTORY", "utf8"))
+    com_con.sendall(bytes("DIRECTORY", "utf8"))
     # temp = dt.DirectoryTreeUI(window, client)
     # temp.button_6.configure(command=lambda: back(temp))
     return
 
 
 def registry():
-    CommunicationConnection.sendall(bytes("REGISTRY", "utf8"))
+    com_con.sendall(bytes("REGISTRY", "utf8"))
     # temp = rc.RegistryUI(window, client)
     # temp.btn_back.configure(command=lambda: back_reg(temp))
     return
 
 
 def shutdown_logout():
-    CommunicationConnection.sendall(bytes("SD_LO", "utf8"))
+    com_con.sendall(bytes("SD_LO", "utf8"))
     # temp = sl.shutdown_logout(client, window)
     return
 
@@ -98,7 +103,7 @@ def show_main_ui():
     frame_hp.button_mac_address.configure(command=mac_address)
     frame_hp.button_disconnect.configure(command=disconnect)
     frame_hp.button_keylogger.configure(command=keylogger)
-    frame_hp.button_app_process.configure(command=app_process)
+    frame_hp.button_control.configure(command=control)
     frame_hp.button_directoryTree.configure(command=directory_tree)
     frame_hp.button_registry.configure(command=registry)
     frame_hp.button_shut_down.configure(command=shutdown_logout)
@@ -106,7 +111,7 @@ def show_main_ui():
 
 
 def connect(frame):
-    global CommunicationConnection
+    global com_con
     # ip = frame.ip_input.get()
     try:
         # client.connect((HOST, SERVER_PORT))
@@ -118,7 +123,7 @@ def connect(frame):
 
 
 def main():
-    CommunicationConnection.connect((HOST, SERVER_PORT))
+    com_con.connect((HOST, SERVER_PORT))
     frame_login.connect.configure(command=lambda: connect(frame_login))
     window.mainloop()
 
