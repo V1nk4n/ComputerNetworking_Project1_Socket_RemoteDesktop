@@ -21,7 +21,7 @@ class DesktopController:
     def __init__(self, window):
         # Gán cửa sổ đã tạo ở main cho self.window
         self.window = window
-        # Đặt tên cho cửa sổ
+        # # Đặt tên cho cửa sổ
         self.window.title("Remote Desktop Controller")
 
         print("Controller")
@@ -138,7 +138,7 @@ class DesktopController:
  
 #main   
 try:
-    # Tạo cửa sổ ứng dụng
+    #Tạo cửa sổ ứng dụng
     window = tk.Tk()
     # Khởi động ứng dụng
     App = DesktopController(window)
