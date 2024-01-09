@@ -29,7 +29,7 @@ def sendListDirs(directoryConnection):
         
         data = pickle.dumps(listTree)
         directoryConnection.sendall(str(len(data)).encode())
-        temp = directoryConnection.recv(BUFFERSIZE)
+        temp = directoryConnection.recv(9999999)
         directoryConnection.sendall(data)
         return [True, path]
     except:
