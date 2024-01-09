@@ -3,11 +3,17 @@ from tkinter import *
 from tkinter import messagebox
 from tkinter.ttk import *
 
-from DC_Home import HomePageUI
-from DC_Login import LoginPageUI
+from DC_Home import Menu
+from DC_Login import Login
+
+import DC_ShutOut as so
+import DC_Mac as ma
 from DC_Screen import DesktopUI
 from DC_Control import Control
 from DC_KeyLogger import KeyloggerUI
+from DC_AppProcess import AppProcessUI
+from DC_Directory import DirectoryTreeUI
+
 from DC_Constant import FORMAT, HOST, SERVER_PORT
 
 # global variables
@@ -16,8 +22,8 @@ com_con = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 window = Tk()
 window.configure(bg="#000")
 window.title("Remote Desktop Controller")
-# window.resizable(False, False)
-frame_login = LoginPageUI(window)
+window.resizable(False, False)
+frame_login = Login(window)
 
 
 def back(temp):
@@ -37,13 +43,13 @@ def live_screen():
 
 
 def mac_address():
-    com_con.sendall(bytes("MAC", "utf8"))
-    # mac.mac_address(client)
+    com_con.sendall("MAC".encode(FORMAT))
+    ma.mac_addr(com_con)
     return
 
 
 def disconnect():
-    com_con.sendall(bytes("QUIT", "utf8"))
+    com_con.sendall("QUIT".encode(FORMAT))
     frame_hp.destroy()
     window.destroy()
     return
@@ -72,44 +78,35 @@ def control():
         mouse_con.close()
     return
 
-
-def back_reg(temp):
-    temp.client.sendall(bytes("STOP_EDIT_REGISTRY", "utf8"))
-    temp.destroy()
-    frame_hp.tkraise()
-
-
 def directory_tree():
     com_con.sendall(bytes("DIRECTORY", "utf8"))
-    # temp = dt.DirectoryTreeUI(window, client)
-    # temp.button_6.configure(command=lambda: back(temp))
+    temp = DirectoryTreeUI(window, com_con)
+    temp.button_6.configure(command=lambda: back(temp))
     return
 
-
-def registry():
-    com_con.sendall(bytes("REGISTRY", "utf8"))
-    # temp = rc.RegistryUI(window, client)
-    # temp.btn_back.configure(command=lambda: back_reg(temp))
+def app_process():
+    com_con.sendall("PROCESS".encode(FORMAT))
+    temp = AppProcessUI(window, com_con)
+    temp.button_back.configure(command=lambda: back(temp))
     return
-
 
 def shutdown_logout():
-    com_con.sendall(bytes("SD_LO", "utf8"))
-    # temp = sl.shutdown_logout(client, window)
+    com_con.sendall("SHUTOUT".encode(FORMAT))
+    temp = so.shutdown_logout(window, com_con)
     return
 
 
 def show_main_ui():
     frame_login.destroy()
     global frame_hp
-    frame_hp = HomePageUI(window)
+    frame_hp = Menu(window)
     frame_hp.button_live_creen.configure(command=live_screen)
     frame_hp.button_mac_address.configure(command=mac_address)
     frame_hp.button_disconnect.configure(command=disconnect)
     frame_hp.button_keylogger.configure(command=keylogger)
     frame_hp.button_control.configure(command=control)
     frame_hp.button_directoryTree.configure(command=directory_tree)
-    frame_hp.button_registry.configure(command=registry)
+    frame_hp.button_app_process.configure(command=app_process)
     frame_hp.button_shut_down.configure(command=shutdown_logout)
     return
 

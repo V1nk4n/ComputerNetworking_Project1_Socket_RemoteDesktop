@@ -1,14 +1,14 @@
 import socket
 import tkinter as tk
 import RD_Screen as screen
-import RD_Controlled as controlled
+import RD_Controlled as ctrlled
 import RD_KeyLogger as logger
+import RD_ShutOut as so
+import RD_Mac as ma
+import RD_AppProcess as ap
+import RD_Directory as dr
 
-HOST = "127.0.0.1"
-SERVER_PORT = 61000
-FORMAT = "utf8"
-BUFFERSIZE = 1024*1024
-DELAY = 10
+from RD_Constant import HOST, SERVER_PORT, FORMAT, BUFFERSIZE, DELAY
 
 def live_screen():
     screen_con, screen_addr = s.accept()
@@ -19,16 +19,31 @@ def control():
     screen_con, screen_addr = s.accept()
     key_con, key_addr = s.accept()
     mouse_con, mouse_addr = s.accept()
-    controlled.controlled(com_con, screen_con, key_con, mouse_con)
+    ctrlled.controlled(com_con, screen_con, key_con, mouse_con)
     screen_con.close()
     key_con.close()
     mouse_con.close()
     return
 
 def key_logger():
-    logger.key_log(com_con)
+    logger.keylog(com_con)
     return
 
+def shutout():
+    so.shutout(com_con)
+    return
+
+def mac_address():
+    ma.mac_addr(com_con)
+    return
+
+def app_process():
+    ap.app_process(com_con)
+    return  
+
+def directory_tree():
+    dr.directory(com_con)
+    return
 try:
     global s
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -42,20 +57,18 @@ try:
             live_screen()
         elif "CONTROL" in msg:
             control()
-        # elif "SD_LO" in msg:
-        #     shutdown_logout()
+        elif "SHUTOUT" in msg:
+            shutout()
         elif "KEYLOG" in msg:
             key_logger()
-        # elif "APP_PRO" in msg:
-        #     app_process()
-        # elif "MAC" in msg:
-        #     mac_address()
+        elif "PROCESS" in msg:
+            app_process()
+        elif "MAC" in msg:
+            mac_address()
         # elif "DIRECTORY" in msg:
         #     directory_tree()
-        # elif "REGISTRY" in msg:
-        #     registry()
-        # elif "QUIT" in msg:
-        #     client.close()
-        #     s.close()
+        elif "QUIT" in msg:
+            com_con.close()
+            s.close()
 except:
     print("Error")

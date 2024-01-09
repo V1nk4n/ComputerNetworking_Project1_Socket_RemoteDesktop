@@ -90,7 +90,7 @@ class Control(Frame):
         
     # display frames continously
     def ChangeImage(self):
-        while not self.stop_event.is_set():
+        while self.screenConnection:
             #Nhận chiều dài của hình ảnh ở kiểu byte
             length_bytes = self.screenConnection.recv(4)
             #Độ dài của hình ảnh ở kiểu int
@@ -118,6 +118,7 @@ class Control(Frame):
                 self.screenConnection.sendall("CONTINUE".encode(FORMAT))
             else:
                 self.screenConnection.sendall("STOP".encode(FORMAT))
+                break
 
         
         # Return the main UI
@@ -127,6 +128,7 @@ class Control(Frame):
             self.window.bind("<Key>", self.press)
         else:
             self.window.unbind("<Key>")
+            self.keyConnection.sendall("STOP".encode(FORMAT))
         
         self.key_status = False
 
@@ -150,6 +152,7 @@ class Control(Frame):
             self.window.unbind("<Button-1>")
             self.window.unbind("<Button-3>")
             self.window.unbind("<MouseWheel>")
+            self.mouseConnection.sendall("STOP".encode(FORMAT))
             
         self.mouse_status = False
         
@@ -185,6 +188,7 @@ class Control(Frame):
 
     def click_back(self):
         self.status = False
+        self.screen_status = False
         self.KeyControl()
         self.MouseControl()
         self.stop_event.set()

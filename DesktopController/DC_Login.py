@@ -5,7 +5,7 @@ BACKGROUND = "#bbd4ce"
 
 
 
-class LoginPageUI(Frame):
+class Login(Frame):
     def __init__(self, parent):
         Frame.__init__(self, parent)
         self.configure(

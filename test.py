@@ -5,7 +5,7 @@ from PIL import Image
 import io
 from PIL import ImageGrab
 import tkinter as tk
-
+import keyboard
 def recvList(conn):
     list = []
     item = conn.recv(1024).decode(FORMAT)
@@ -62,10 +62,8 @@ def press(event):
         buffer = event.char
         print(buffer)
      
-window = tk.Tk()
-window.bind("<Key>", press)
-window.mainloop
-input()
+for i in range(150):
+    keyboard.unblock_key(i)
 # s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 # s.bind((HOST, SERVER_PORT))
 # s.listen()

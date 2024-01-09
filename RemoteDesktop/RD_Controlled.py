@@ -61,6 +61,9 @@ def KeyControlled(key_con):
         #Nhận dữ liệu bàn phím
         buffer = key_con.recv(BUFFERSIZE).decode()
         
+        if "STOP" in buffer:
+            break   
+        
         if not buffer:
             break
         
@@ -74,6 +77,9 @@ def MouseControlled(mouse_con):
     while not stop_event.is_set():
         #Nhận dữ liệu chuột
         buffer = mouse_con.recv(BUFFERSIZE).decode()
+        
+        if "STOP" in buffer:
+            break   
         
         if not buffer:
             break

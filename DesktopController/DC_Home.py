@@ -1,9 +1,9 @@
 from tkinter import *
 from PIL import Image, ImageTk
 
-BACKGROUND = "#bbd4ce"
+from DC_Constant import BACKGROUND
 
-class HomePageUI(Frame):
+class Menu(Frame):
     def __init__(self, parent):
         Frame.__init__(self, parent)
         self.configure(
@@ -56,7 +56,7 @@ class HomePageUI(Frame):
         )
         self.button_directoryTree.place(x=80, y=280, width=200, height=60)
 
-        # button - app process
+        # button - control
         self.button_control = Button(
             self,
             borderwidth=0,
@@ -67,20 +67,20 @@ class HomePageUI(Frame):
             highlightthickness=0,
             relief="flat",
         )
-        self.button_control.place(x=420, y=80, width=200, height=60)
+        self.button_control.place(x=80, y=380, width=200, height=60)
 
-        # button - registry
-        self.button_registry = Button(
+        # button - app process
+        self.button_app_process = Button(
             self,
             borderwidth=0,
-            text="Registry",
+            text="App Process",
             bg="#fdebd3",
             fg="black",
             font="Calibri 15",
             highlightthickness=0,
             relief="flat",
         )
-        self.button_registry.place(x=420, y=180, width=200, height=60)
+        self.button_app_process.place(x=420, y=180, width=200, height=60)
         # button - mac address
         self.button_mac_address = Button(
             self,
@@ -104,12 +104,7 @@ class HomePageUI(Frame):
             highlightthickness=0,
             relief="flat",
         )
-        self.button_shut_down.place(
-            x=80,
-            y=380,
-            width=200,
-            height=60,
-        )
+        self.button_shut_down.place(x=420, y=80, width=200, height=60)
 
         self.button_disconnect = Button(
             self,

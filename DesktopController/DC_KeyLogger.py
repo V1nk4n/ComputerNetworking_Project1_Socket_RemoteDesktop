@@ -2,22 +2,22 @@ import tkinter as tk
 from tkinter import *
 from tkinter import Button, Text
 
-from DC_Constant import BACKGROUND, BUFFERSIZE
+from DC_Constant import BACKGROUND, BUFFERSIZE, FORMAT
 
 
-def hook(client, button):
-    client.sendall(bytes("HOOK", "utf8"))
-    if button["text"] == "HOOK":
-        button.configure(text="UNHOOK")
+def bind(client, button):
+    client.sendall("BIND".encode(FORMAT))
+    if button["text"] == "BIND":
+        button.configure(text="UNBIND")
     else:
-        button.configure(text="HOOK")
+        button.configure(text="BIND")
     return
 
 
-def _print(client, textbox):
-    client.sendall(bytes("PRINT", "utf8"))
-    data = client.recv(BUFFERSIZE).decode("utf8")
-    data = data[1:]
+def show(client, textbox):
+    client.sendall("SHOW".encode(FORMAT))
+    data = client.recv(BUFFERSIZE).decode(FORMAT)
+    
     textbox.config(state="normal")
     textbox.insert(tk.END, data)
     textbox.config(state="disable")
@@ -32,7 +32,7 @@ def delete(textbox):
 
 
 def lock(client, button):
-    client.sendall(bytes("LOCK", "utf8"))
+    client.sendall("LOCK".encode(FORMAT))
     if button["text"] == "LOCK":
         button.configure(text="UNLOCK")
     else:
@@ -58,7 +58,7 @@ class KeyloggerUI(Frame):
         parent.geometry("1000x600+200+200")
         self.grid(row=0, column=0, sticky="nsew")
 
-        self.text_1 = Text(
+        self.box = Text(
             self,
             height=200,
             width=500,
@@ -68,11 +68,11 @@ class KeyloggerUI(Frame):
             bg="white",
             highlightthickness=0,
         )
-        self.text_1.place(x=220, y=100, width=600, height=360)
+        self.box.place(x=220, y=100, width=600, height=360)
 
-        self.button_hook = Button(
+        self.button_bind = Button(
             self,
-            text="HOOK",
+            text="BIND",
             width=20,
             height=5,
             bg="#fdebd3",
@@ -80,11 +80,11 @@ class KeyloggerUI(Frame):
             borderwidth=0,
             highlightthickness=0,
             font="Calibri 15",
-            command=lambda: hook(client, self.button_hook),
+            command=lambda: bind(client, self.button_bind),
             relief="raised",
         )
 
-        self.button_hook.place(x=850, y=150, width=135, height=53.0)
+        self.button_bind.place(x=850, y=150, width=135, height=53.0)
 
         self.button_lock = Button(
             self,
@@ -102,9 +102,9 @@ class KeyloggerUI(Frame):
 
         self.button_lock.place(x=850, y=300, width=135, height=53)
 
-        self.button_print = Button(
+        self.button_show = Button(
             self,
-            text="PRINT",
+            text="SHOW",
             width=20,
             height=5,
             bg="#fdebd3",
@@ -112,11 +112,11 @@ class KeyloggerUI(Frame):
             borderwidth=0,
             highlightthickness=0,
             font="Calibri 15",
-            command=lambda: _print(client, self.text_1),
+            command=lambda: show(client, self.box),
             relief="raised",
         )
 
-        self.button_print.place(x=30, y=150, width=135, height=53)
+        self.button_show.place(x=30, y=150, width=135, height=53)
 
         self.button_delete = Button(
             self,
@@ -128,7 +128,7 @@ class KeyloggerUI(Frame):
             borderwidth=0,
             highlightthickness=0,
             font="Calibri 15",
-            command=lambda: delete(self.text_1),
+            command=lambda: delete(self.box),
             relief="raised",
         )
 
