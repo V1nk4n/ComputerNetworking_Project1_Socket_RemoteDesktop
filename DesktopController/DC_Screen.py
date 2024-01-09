@@ -4,7 +4,7 @@ from threading import Thread
 from tkinter import Frame
 from tkinter.filedialog import asksaveasfile
 
-from Constant import BACKGROUND, BUFFERSIZE, WIDTH, HEIGHT, FORMAT
+from DC_Constant import BACKGROUND, BUFFERSIZE, WIDTH, HEIGHT, FORMAT
 from PIL import Image, ImageTk
 
 
@@ -19,8 +19,8 @@ class DesktopUI(Frame):
             highlightthickness=0,
             relief="ridge",
         )
-        # parent.geometry("1000x600+200+200")
-        self.grid(row=0, column=0, sticky="se")
+        parent.geometry("900x500+200+200")
+        self.grid(row=0, column=0, sticky="nsew")
 
         # copy socket connection to own attribute
         self.screenConnection = screen_con
@@ -33,8 +33,8 @@ class DesktopUI(Frame):
 
         # label to display frames received from server
         self.label = tk.Label(self)
-        self.label.place(x=0, y=0, width=WIDTH, height=HEIGHT)
-
+        self.label.place(x=30, y=0, width=WIDTH-60, height=HEIGHT-60)
+        
         # a button to save captured screen
         self.button_save = tk.Button(
             self,
@@ -45,7 +45,7 @@ class DesktopUI(Frame):
             command=lambda: self.click_save(),
             relief="flat",
         )
-        self.button_save.place(x=120, y=560, width=200, height=30)
+        self.button_save.place(x=167, y=HEIGHT-40, width=200, height=30)
 
         # a button to stop receiving and return to main interface
         self.button_back = tk.Button(
@@ -57,7 +57,7 @@ class DesktopUI(Frame):
             command=lambda: self.click_back(),
             relief="flat",
         )
-        self.button_back.place(x=730, y=560, width=200, height=30)
+        self.button_back.place(x=534, y=HEIGHT-40, width=200, height=30)
 
         # thread
         self.start = Thread(target=self.ChangeImage, daemon=True)
@@ -82,7 +82,7 @@ class DesktopUI(Frame):
             #Tạo 1 BytesIO cho phép đọc dữ liệu dạng byte
             image_byte_io = io.BytesIO(image_byte_array)
             #Mở hình ảnh
-            image = Image.open(image_byte_io).resize((WIDTH, HEIGHT))
+            image = Image.open(image_byte_io).resize((WIDTH-60,HEIGHT-60))
             #Tạo đối tượng PhotoImage để đưa lên window
             photo = ImageTk.PhotoImage(image)
             

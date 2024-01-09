@@ -5,7 +5,7 @@ from threading import Thread, Event
 from tkinter import Frame
 from tkinter.filedialog import asksaveasfile
 
-from Constant import BACKGROUND, BUFFERSIZE, WIDTH, HEIGHT, FORMAT
+from DC_Constant import BACKGROUND, BUFFERSIZE, WIDTH, HEIGHT, FORMAT
 from PIL import Image, ImageTk
 
 
@@ -20,8 +20,8 @@ class Control(Frame):
             highlightthickness=0,
             relief="ridge",
         )
-        # parent.geometry("1000x600+200+200")
-        self.grid(row=0, column=0, sticky="se")
+        parent.geometry("900x500+200+200")
+        self.grid(row=0, column=0, sticky="nsew")
         
         self.window = parent
         
@@ -30,7 +30,7 @@ class Control(Frame):
 
         # label to display frames received from server
         self.label = tk.Label(self)
-        self.label.place(x=0, y=0, width=WIDTH, height=HEIGHT)
+        self.label.place(x=30, y=0, width=WIDTH-60, height=HEIGHT-60)
 
         # a button to stop receiving and return to main interface
         self.button_back = tk.Button(
@@ -42,7 +42,7 @@ class Control(Frame):
             command=lambda: self.click_back(),
             relief="flat",
         )
-        self.button_back.place(x=730, y=560, width=200, height=30)
+        self.button_back.place(x=167, y=HEIGHT-40, width=200, height=30)
 
         self.stop_event = Event()
 
@@ -52,6 +52,10 @@ class Control(Frame):
         self.screenConnection = screen_con
         self.keyConnection = key_con
         self.mouseConnection = mouse_con
+        
+        self.screen_status = True
+        self.key_status = True
+        self.mouse_status = True
 
         # thread
         self.checkThread = Thread(target=self.CheckStop)
@@ -109,12 +113,23 @@ class Control(Frame):
             
             self.label.configure(image=photo)
             self.label.image = photo
+            
+            if self.screen_status:
+                self.screenConnection.sendall("CONTINUE".encode(FORMAT))
+            else:
+                self.screenConnection.sendall("STOP".encode(FORMAT))
 
         
         # Return the main UI
     def KeyControl(self):
         #Lắng nghe bàn phím
-        self.window.bind("<Key>", self.press)
+        if self.key_status:
+            self.window.bind("<Key>", self.press)
+        else:
+            self.window.unbind("<Key>")
+        
+        self.key_status = False
+
         
     def press(self, event):
         #Truyền phím nhập
@@ -125,37 +140,51 @@ class Control(Frame):
         
     def MouseControl(self):
         #Lắng nghe chuột
-        self.window.bind("<Motion>", self.move)
-        self.window.bind("<Button-1>", self.clickLeft)
-        self.window.bind("<Button-3>", self.clickRight)
-        self.window.bind("<MouseWheel>", self.scroll)
+        if self.mouse_status:
+            self.window.bind("<Motion>", self.move)
+            self.window.bind("<Button-1>", self.clickLeft)
+            self.window.bind("<Button-3>", self.clickRight)
+            self.window.bind("<MouseWheel>", self.scroll)
+        else:
+            self.window.unbind("<Motion>")
+            self.window.unbind("<Button-1>")
+            self.window.unbind("<Button-3>")
+            self.window.unbind("<MouseWheel>")
+            
+        self.mouse_status = False
         
     def clickLeft(self, event):
         #Nhấn bên trái
-        buffer = f"clickLeft,{event.x},{event.y}"
-        self.mouseConnection.sendall(buffer.encode())
-        buffer = self.mouseConnection.recv(BUFFERSIZE).decode()
-        buffer =""
+        if(event.x>=0&event.x<=WIDTH-60&event.y>=0&event.y<=HEIGHT-60):
+            buffer = f"clickLeft,{event.x*1920/(WIDTH-60)},{event.y*1080/(HEIGHT-60)}"
+            self.mouseConnection.sendall(buffer.encode())
+            buffer = self.mouseConnection.recv(BUFFERSIZE).decode()
+            buffer =""
     def clickRight(self, event):
         #Nhấn bên phải
-        buffer = f"clickRight,{event.x},{event.y}"
-        self.mouseConnection.sendall(buffer.encode())
-        buffer = self.mouseConnection.recv(BUFFERSIZE).decode()
-        buffer =""
+        if(event.x>=0 and event.x<=WIDTH-60 and event.y>=0 and event.y<=HEIGHT-60):
+            buffer = f"clickRight,{event.x*1920/(WIDTH-60)},{event.y*1080/(HEIGHT-60)}"
+            self.mouseConnection.sendall(buffer.encode())
+            buffer = self.mouseConnection.recv(BUFFERSIZE).decode()
+            buffer =""
     def move(self, event):
         #Di chuyển chuột
-        buffer = f"move,{event.x},{event.y}"
-        print(buffer)
-        self.mouseConnection.sendall(buffer.encode())
-        buffer = self.mouseConnection.recv(BUFFERSIZE).decode()
-        buffer =""
+        if(event.x>=0 and event.x<=WIDTH-60 and event.y>=0 and event.y<=HEIGHT-60):
+            buffer = f"move,{event.x*1920/(WIDTH-60)},{event.y*1080/(HEIGHT-60)}"
+            print(buffer)
+            self.mouseConnection.sendall(buffer.encode())
+            buffer = self.mouseConnection.recv(BUFFERSIZE).decode()
+            buffer =""
     def scroll(self, event):
         #Cuộn chuột
-        buffer = f"move,{event.x},{event.y}"
-        self.mouseConnection.sendall(buffer.encode())
-        buffer = self.mouseConnection.recv(BUFFERSIZE).decode()
-        buffer =""
+        if(event.x>=0 and event.x<=WIDTH-60 and event.y>=0 and event.y<=HEIGHT-60):
+            buffer = f"move,{event.x*1920/(WIDTH-60)},{event.y*1080/(HEIGHT-60)}"
+            self.mouseConnection.sendall(buffer.encode())
+            buffer = self.mouseConnection.recv(BUFFERSIZE).decode()
+            buffer =""
 
     def click_back(self):
         self.status = False
+        self.KeyControl()
+        self.MouseControl()
         self.stop_event.set()

@@ -7,7 +7,8 @@ from DC_Home import HomePageUI
 from DC_Login import LoginPageUI
 from DC_Screen import DesktopUI
 from DC_Control import Control
-from Constant import FORMAT, HOST, SERVER_PORT
+from DC_KeyLogger import KeyloggerUI
+from DC_Constant import FORMAT, HOST, SERVER_PORT
 
 # global variables
 com_con = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -22,7 +23,7 @@ frame_login = LoginPageUI(window)
 def back(temp):
     temp.destroy()
     frame_hp.tkraise()
-    com_con.sendall(bytes("QUIT", "utf8"))
+    # com_con.sendall(bytes("QUIT", "utf8"))
 
 
 def live_screen():
@@ -49,9 +50,9 @@ def disconnect():
 
 
 def keylogger():
-    com_con.sendall(bytes("KEYLOG", "utf8"))
-    # temp = kl.KeyloggerUI(window, client)
-    # temp.button_back.configure(command=lambda: back(temp))
+    com_con.sendall("KEYLOG".encode(FORMAT))
+    temp = KeyloggerUI(window, com_con)
+    temp.button_back.configure(command=lambda: back(temp))
     return
 
 
@@ -66,6 +67,9 @@ def control():
     temp = Control(window, com_con, screen_con, key_con, mouse_con)
     if temp.status == False:
         back(temp)
+        screen_con.close()
+        key_con.close()
+        mouse_con.close()
     return
 
 

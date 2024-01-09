@@ -22,7 +22,7 @@ class RemoteDesktop:
         self.sk = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sk.bind((HOST, SERVER_PORT))
         self.sk.listen()
-        print("Remote Desktop")
+        print("Remote Desktop1")
         
         # Khởi tạo socket (Connection), địa chỉ (Addr) (Cái này không sử dụng chỉ truyền cho đủ tham số của hàm accept của socket),
         # luồng (Thread) để truyền chuột, bàn phím, màn hình
@@ -136,7 +136,6 @@ class RemoteDesktop:
         return
                    
 
-#main
 try:
     #Khởi động ứng dụng
     App = RemoteDesktop()

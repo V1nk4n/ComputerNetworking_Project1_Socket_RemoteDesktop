@@ -1,12 +1,13 @@
-from threading import Thread
-from Constant import FORMAT, BUFFERSIZE
+from threading import Thread, Event
+from RD_Constant import FORMAT, BUFFERSIZE
 import pyautogui as pag
 import io
 import socket
 
 def controlled(com_con, screen_con, key_con, mouse_con):
-    global status
-    status = True
+
+    global stop_event
+    stop_event = Event()
     
     checkThread = Thread(target = CheckStop, args=(com_con,))
     checkThread.start()
@@ -21,17 +22,22 @@ def controlled(com_con, screen_con, key_con, mouse_con):
     #Hàm chuột đang lỗi
     mouseThread = Thread(target = MouseControlled, args=(mouse_con,))
     mouseThread.start()
+    
+    screenThread.join()
+    keyThread.join()
+    mouseThread.join()
+    
+    stop_event.clear()
+    
 
 def CheckStop(com_con):
-    global status
-    while com_con:
+    while not stop_event.is_set():
         flag = com_con.recv(BUFFERSIZE).decode(FORMAT)
         if "STOP" in flag:
-            status = False
+            stop_event.set()
 
 def send_img(screen_con):
-    global status
-    while status:
+    while not stop_event.is_set():
         #Chụp màn hình
         image = pag.screenshot()
         #Tạo BytesIO lưu hình ảnh ở dạng byte
@@ -45,10 +51,13 @@ def send_img(screen_con):
         screen_con.sendall(len(image_byte_array).to_bytes(4))
         #Gửi hình ảnh
         screen_con.sendall(image_byte_array)
-            
+         
+        status = screen_con.recv(BUFFERSIZE).decode(FORMAT)
+        if "STOP" in status:
+            break   
 
 def KeyControlled(key_con):
-    while status:
+    while not stop_event.is_set():
         #Nhận dữ liệu bàn phím
         buffer = key_con.recv(BUFFERSIZE).decode()
         
@@ -56,12 +65,13 @@ def KeyControlled(key_con):
             break
         
         print(buffer)
+        pag.press(buffer)
         
         key_con.sendall(buffer.encode(FORMAT))
         buffer=""
 
 def MouseControlled(mouse_con):
-    while status:
+    while not stop_event.is_set():
         #Nhận dữ liệu chuột
         buffer = mouse_con.recv(BUFFERSIZE).decode()
         
@@ -76,20 +86,20 @@ def MouseControlled(mouse_con):
         if command == "clickLeft":
             button = 'left'
             print("ClickLeft ",x,y)
-            # pag.click(x, y,button)
+            pag.click(x, y,button)
         #Nếu lệnh là nhấp phải
         if command == "clickRight":
             button = 'right'
             print("ClickRight ",x,y)
-            # pag.click(x, y, button)
+            pag.click(x, y, button)
         #Nếu lệnh là di chuyển
         if command == "move":
             print(x,y)
-            # pag.moveTo(x,y)
+            pag.moveTo(x,y)
         #Nếu lệnh là cuộn
         if command == "scroll":
             print("Scroll ",x,y)
-            # pag.scroll(x)
+            pag.scroll(x)
         mouse_con.sendall(buffer.encode())
         #Dọn buffer
         buffer=""
