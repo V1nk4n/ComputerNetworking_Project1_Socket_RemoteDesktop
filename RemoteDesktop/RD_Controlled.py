@@ -92,20 +92,20 @@ def MouseControlled(mouse_con):
         if command == "clickLeft":
             button = 'left'
             print("ClickLeft ",x,y)
-            #pag.click(x, y,button)
+            pag.click(x, y,button)
         #Nếu lệnh là nhấp phải
         if command == "clickRight":
             button = 'right'
             print("ClickRight ",x,y)
-            #pag.click(x, y, button)
+            pag.click(x, y, button)
         #Nếu lệnh là di chuyển
         if command == "move":
             print(x,y)
-            #pag.moveTo(x,y)
+            pag.moveTo(x,y)
         #Nếu lệnh là cuộn
         if command == "scroll":
             print("Scroll ",x,y)
-            #pag.scroll(x)
+            pag.scroll(x)
         mouse_con.sendall(buffer.encode())
         #Dọn buffer
         buffer=""
