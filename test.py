@@ -60,7 +60,7 @@ def scroll(event):
 
 def scroll(self, event):
         #Cuộn chuột
-    x = event.x
+    x = event.delta
     y = event.y
     buffer = f"scroll,{x},{y}"
     print(buffer)

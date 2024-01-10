@@ -181,8 +181,10 @@ class Control(Frame):
     def scroll(self, event):
         #Cuộn chuột
         if(event.x>=0 and event.x<=WIDTH-60 and event.y>=0 and event.y<=HEIGHT-60):
-            x = int(event.x*1920/(WIDTH-60))
-            y = int(event.y*1080/(HEIGHT-60))
+            # x = int(event.x*1920/(WIDTH-60))
+            # y = int(event.y*1080/(HEIGHT-60))
+            x = event.delta
+            y = 0
             buffer = f"scroll,{x},{y}"
             self.mouseConnection.sendall(buffer.encode())
             buffer = self.mouseConnection.recv(BUFFERSIZE).decode()
