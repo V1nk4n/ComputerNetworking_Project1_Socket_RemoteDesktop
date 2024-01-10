@@ -102,9 +102,9 @@ def show_menu_ui():
 
 def connect(login):
     global main_connect
-    # ip = frame.ip_input.get()
+    IP = login.ip_input.get()
     try:
-        # client.connect((HOST, SERVER_PORT))
+        main_connect.connect((IP, SERVER_PORT))
         show_menu_ui()
     except Exception as e:
         print(e)
@@ -113,7 +113,6 @@ def connect(login):
 
 
 def main():
-    main_connect.connect((HOST, SERVER_PORT))
     login_ui.connect.configure(command=lambda: connect(login_ui))
     window.mainloop()
 

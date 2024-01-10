@@ -45,10 +45,23 @@ def app_process():
 def directory_tree():
     dir.directory(main_connection)
     return
+
+def get_ip_address():
+    try:
+        # Lấy địa chỉ IP của máy thông qua một kết nối mạng
+        hostname = socket.gethostname()
+        ip_address = socket.gethostbyname(hostname)
+        return ip_address
+    except socket.error as e:
+        print(f"Error: {e}")
+        return None
+    
 try:
     global s
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.bind((HOST, SERVER_PORT))
+    IP = get_ip_address()
+    print(IP)
+    s.bind((IP, SERVER_PORT))
     s.listen(100)
     global com_con
     main_connection, main_addr = s.accept()
