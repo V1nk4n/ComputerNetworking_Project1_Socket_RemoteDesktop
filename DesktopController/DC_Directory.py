@@ -4,7 +4,7 @@ import tkinter.ttk as ttk
 import pickle
 from tkinter import Text, Button,filedialog, messagebox, Frame
 from tkinter import*
-from DC_Constant import BACKGROUND, BUFFERSIZE, WIDTH, HEIGHT
+from DC_Constant import BACKGROUND, BUFFERSIZE, WIDTH, HEIGHT, FORMAT
 
 def listDirs(dire_con, path):
     dire_con.sendall(path.encode())
@@ -257,3 +257,4 @@ class DirectoryTree(Frame):
 
     def click_back(self):
         self.status = False
+        self.client.sendall("STOP".encode(FORMAT))

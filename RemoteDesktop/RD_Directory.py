@@ -119,7 +119,7 @@ def directory(directoryConnection):
             deleteFile(directoryConnection)
             isMod = False
 
-        elif (mod == "QUIT"):
+        elif (mod == "STOP"):
             return
         
         else:
