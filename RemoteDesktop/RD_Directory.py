@@ -122,5 +122,5 @@ def directory(directoryConnection):
         elif (mod == "STOP"):
             return
         
-        else:
-            directoryConnection.sendall("-1".encode())
+        # else:
+        #     directoryConnection.sendall("-1".encode())
