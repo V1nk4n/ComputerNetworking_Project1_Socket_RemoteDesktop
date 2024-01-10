@@ -1,7 +1,6 @@
 import tkinter as tk
 from tkinter import *
 from tkinter import Button, Text
-
 from DC_Constant import BACKGROUND, BUFFERSIZE, WIDTH, HEIGHT, FORMAT
 
 
@@ -64,9 +63,9 @@ class KeyloggerUI(Frame):
             width=500,
             state="disable",
             wrap="char",
-            bd=0,
-            bg="white",
             font=("Tim New Roman",15),
+            bg="white",
+            bd=0,
             highlightthickness=0,
         )
         self.box.place(x=200, y=100, width=500, height=360)
@@ -74,15 +73,14 @@ class KeyloggerUI(Frame):
         self.button_bind = Button(
             self,
             text="BIND",
+            font=("Tim New Roman",15),
             width=20,
             height=5,
             bg="#fdebd3",
             fg="black",
-            borderwidth=0,
-            highlightthickness=0,
-            font=("Tim New Roman",15),
+            borderwidth=3,
+            highlightthickness=2,
             command=lambda: bind(client, self.button_bind),
-            relief="raised",
         )
 
         self.button_bind.place(x=733, y=150, width=135, height=53.0)
@@ -90,15 +88,14 @@ class KeyloggerUI(Frame):
         self.button_lock = Button(
             self,
             text="LOCK",
+            font=("Tim New Roman",15),
             width=20,
             height=5,
             bg="#fdebd3",
             fg="black",
-            borderwidth=0,
-            highlightthickness=0,
-            font=("Tim New Roman",15),
+            borderwidth=3,
+            highlightthickness=2,
             command=lambda: lock(client, self.button_lock),
-            relief="raised",
         )
 
         self.button_lock.place(x=733, y=300, width=135, height=53)
@@ -106,15 +103,14 @@ class KeyloggerUI(Frame):
         self.button_show = Button(
             self,
             text="SHOW",
+            font=("Tim New Roman",15),
             width=20,
             height=5,
             bg="#fdebd3",
             fg="black",
-            borderwidth=0,
-            highlightthickness=0,
-            font=("Tim New Roman",15),
+            borderwidth=3,
+            highlightthickness=2,
             command=lambda: show(client, self.box),
-            relief="raised",
         )
 
         self.button_show.place(x=32, y=150, width=135, height=53)
@@ -122,15 +118,14 @@ class KeyloggerUI(Frame):
         self.button_delete = Button(
             self,
             text="DELETE",
+            font=("Tim New Roman",15),
             width=20,
             height=5,
             bg="#fdebd3",
             fg="black",
-            borderwidth=0,
-            highlightthickness=0,
-            font=("Tim New Roman",15),
+            borderwidth=3,
+            highlightthickness=2,
             command=lambda: delete(self.box),
-            relief="raised",
         )
 
         self.button_delete.place(x=32, y=300, width=135, height=53)
@@ -138,15 +133,14 @@ class KeyloggerUI(Frame):
         self.button_back = Button(
             self,
             text="BACK",
+            font=("Tim New Roman",15),
             width=20,
             height=5,
             bg="#fdebd3",
             fg="black",
-            borderwidth=0,
-            highlightthickness=0,
-            font=("Tim New Roman",15),
+            borderwidth=3,
+            highlightthickness=2,
             command=back,
-            relief="raised",
         )
 
         self.button_back.place(x=730, y=560, width=200, height=30)

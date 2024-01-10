@@ -16,103 +16,90 @@ class Menu(Frame):
         parent.geometry("900x500+200+200")
         self.grid(row=0, column=0, sticky="nsew")
 
-        # button - live creen
-        self.button_live_creen = Button(
+        self.button_Live_Screen = Button(
             self,
-            borderwidth=0,
             text="Live Screen",
+            font=("Tim New Roman",15),
             bg="#fdebd3",
             fg="black",
-            font=("Tim New Roman",15),
-            highlightthickness=0,
-            relief="flat",
+            borderwidth=3,
+            highlightthickness=2,
         )
-        self.button_live_creen.place(x=167, y=52, width=200, height=60)
+        self.button_Live_Screen.place(x=167, y=52, width=200, height=60)
 
-        # button - keylogger
-        self.button_keylogger = Button(
+        self.button_App_Process = Button(
             self,
-            borderwidth=0,
-            text="Key Logger",
-            bg="#fdebd3",
-            fg="black",
-            font=("Tim New Roman",15),
-            highlightthickness=0,
-            relief="flat",
-        )
-        self.button_keylogger.place(x=167, y=164, width=200, height=60)
-
-        # button - directory tree
-        self.button_directoryTree = Button(
-            self,
-            borderwidth=0,
-            text="Directory Tree",
-            bg="#fdebd3",
-            fg="black",
-            font=("Tim New Roman",15),
-            highlightthickness=0,
-            relief="flat",
-        )
-        self.button_directoryTree.place(x=167, y=276, width=200, height=60)
-
-        # button - control
-        self.button_control = Button(
-            self,
-            borderwidth=0,
-            text="Control",
-            bg="#fdebd3",
-            fg="black",
-            font=("Tim New Roman",15),
-            highlightthickness=0,
-            relief="flat",
-        )
-        self.button_control.place(x=167,y=388,width=200,height=60,)
-
-        # button - app process
-        self.button_app_process = Button(
-            self,
-            borderwidth=0,
             text="App Process",
+            font=("Tim New Roman",15),
             bg="#fdebd3",
             fg="black",
-            font=("Tim New Roman",15),
-            highlightthickness=0,
-            relief="flat",
+            borderwidth=3,
+            highlightthickness=2,
         )
-        self.button_app_process.place(x=534, y=52, width=200, height=60)
-        # button - mac address
-        self.button_mac_address = Button(
-            self,
-            borderwidth=0,
-            text="MAC Address",
-            bg="#fdebd3",
-            fg="black",
-            font=("Tim New Roman",15),
-            highlightthickness=0,
-            relief="flat",
-        )
-        self.button_mac_address.place(x=534, y=164, width=200, height=60)
-        # button - shut down
-        self.button_shut_down = Button(
-            self,
-            borderwidth=0,
-            text="Shut Down",
-            bg="#fdebd3",
-            fg="black",
-            font=("Tim New Roman",15),
-            highlightthickness=0,
-            relief="flat",
-        )
-        self.button_shut_down.place(x=534, y=276, width=200, height=60)
+        self.button_App_Process.place(x=534, y=52, width=200, height=60)
 
-        self.button_disconnect = Button(
+        self.button_Keylogger = Button(
             self,
-            borderwidth=0,
-            text="Disconnect",
+            text="Key Logger",
+            font=("Tim New Roman",15),
             bg="#fdebd3",
             fg="black",
-            font=("Tim New Roman",15),
-            highlightthickness=0,
-            relief="flat",
+            borderwidth=3,
+            highlightthickness=2,
         )
-        self.button_disconnect.place(x=534,y=388,width=200,height=60,)
+        self.button_Keylogger.place(x=167, y=164, width=200, height=60)
+
+        self.button_Mac_Address = Button(
+            self,
+            text="MAC Address",
+            font=("Tim New Roman",15),
+            bg="#fdebd3",
+            fg="black",
+            borderwidth=3,
+            highlightthickness=2,
+        )
+        self.button_Mac_Address.place(x=534, y=164, width=200, height=60)
+
+        self.button_Directory_Tree = Button(
+            self,
+            text="Directory Tree",
+            font=("Tim New Roman",15),
+            bg="#fdebd3",
+            fg="black",
+            borderwidth=3,
+            highlightthickness=2,
+        )
+        self.button_Directory_Tree.place(x=167, y=276, width=200, height=60)
+
+        self.button_Shut_Down = Button(
+            self,
+            text="Shut Down",
+            font=("Tim New Roman",15),
+            bg="#fdebd3",
+            fg="black",
+            borderwidth=3,
+            highlightthickness=2,
+        )
+        self.button_Shut_Down.place(x=534, y=276, width=200, height=60)
+
+        self.button_Control_Desktop = Button(
+            self,
+            text="Control Desktop",
+            font=("Tim New Roman",15),
+            bg="#fdebd3",
+            fg="black",
+            borderwidth=3,
+            highlightthickness=2,
+        )
+        self.button_Control_Desktop.place(x=167,y=388,width=200,height=60,)
+
+        self.button_Disconnect = Button(
+            self,
+            text="Disconnect",
+            font=("Tim New Roman",15),
+            bg="#fdebd3",
+            fg="black",
+            borderwidth=3,
+            highlightthickness=2,
+        )
+        self.button_Disconnect.place(x=534,y=388,width=200,height=60,)

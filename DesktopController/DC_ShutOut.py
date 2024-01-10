@@ -14,15 +14,15 @@ def logout(com_con):
 
 def shutdown_logout(parent, com_con):
     window = tk.Toplevel(parent)
-    window.geometry("190x160")
+    window.geometry("200x160")
     window.grab_set()
     window.protocol("WM_DELETE_WINDOW", lambda: close_event(window, com_con))
     shutdown_button = tk.Button(
-        window, text = 'SHUTDOWN', width = 20, height = 2, fg = "black", bg = BACKGROUND, 
+        window, text = 'SHUTDOWN', width = 22, height = 2, fg = "black", bg = BACKGROUND, 
         command = lambda: shutdown(com_con), padx = 20, pady = 20)
     shutdown_button.grid(row = 0, column = 0)
     logout_button = tk.Button(
-        window, text = 'LOGOUT', width = 20, height = 2, fg = BACKGROUND, bg = "black", 
+        window, text = 'LOGOUT', width = 22, height = 2, fg = BACKGROUND, bg = "black", 
         command = lambda: logout(com_con), padx = 20, pady = 20)
     logout_button.grid(row = 1, column = 0)
     window.mainloop()

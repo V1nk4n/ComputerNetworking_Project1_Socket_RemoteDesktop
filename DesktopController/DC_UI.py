@@ -2,10 +2,8 @@ import socket
 from tkinter import *
 from tkinter import messagebox
 from tkinter.ttk import *
-
 from DC_Home import Menu
 from DC_Login import Login
-
 import DC_ShutOut as so
 import DC_Mac as ma
 from DC_Screen import DesktopUI
@@ -15,7 +13,6 @@ from DC_AppProcess import AppProcessUI
 from DC_Directory import DirectoryTreeUI
 from DC_Constant import FORMAT, HOST, SERVER_PORT
 
-# global variables
 com_con = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 window = Tk()
@@ -24,12 +21,10 @@ window.title("Remote Desktop Controller")
 window.resizable(False, False)
 frame_login = Login(window)
 
-
 def back(temp):
     temp.destroy()
     frame_hp.tkraise()
     # com_con.sendall(bytes("QUIT", "utf8"))
-
 
 def live_screen():
     com_con.sendall("LIVESCREEN".encode(FORMAT))
@@ -40,12 +35,10 @@ def live_screen():
         back(temp)
     return
 
-
 def mac_address():
     com_con.sendall("MAC".encode(FORMAT))
     ma.mac_addr(com_con)
     return
-
 
 def disconnect():
     com_con.sendall("QUIT".encode(FORMAT))
@@ -53,15 +46,13 @@ def disconnect():
     window.destroy()
     return
 
-
 def keylogger():
     com_con.sendall("KEYLOG".encode(FORMAT))
     temp = KeyloggerUI(window, com_con)
     temp.button_back.configure(command=lambda: back(temp))
     return
 
-
-def control():
+def control_desktop():
     com_con.sendall("CONTROL".encode(FORMAT))
     screen_con = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     screen_con.connect((HOST,SERVER_PORT))
@@ -94,21 +85,19 @@ def shutdown_logout():
     temp = so.shutdown_logout(window, com_con)
     return
 
-
 def show_main_ui():
     frame_login.destroy()
     global frame_hp
     frame_hp = Menu(window)
-    frame_hp.button_live_creen.configure(command=live_screen)
-    frame_hp.button_mac_address.configure(command=mac_address)
-    frame_hp.button_disconnect.configure(command=disconnect)
-    frame_hp.button_keylogger.configure(command=keylogger)
-    frame_hp.button_control.configure(command=control)
-    frame_hp.button_directoryTree.configure(command=directory_tree)
-    frame_hp.button_app_process.configure(command=app_process)
-    frame_hp.button_shut_down.configure(command=shutdown_logout)
+    frame_hp.button_Live_Screen.configure(command=live_screen)
+    frame_hp.button_App_Process.configure(command=app_process)
+    frame_hp.button_Keylogger.configure(command=keylogger)
+    frame_hp.button_Mac_Address.configure(command=mac_address)
+    frame_hp.button_Directory_Tree.configure(command=directory_tree)
+    frame_hp.button_Shut_Down.configure(command=shutdown_logout)
+    frame_hp.button_Control_Desktop.configure(command=control_desktop)
+    frame_hp.button_Disconnect.configure(command=disconnect)
     return
-
 
 def connect(frame):
     global com_con

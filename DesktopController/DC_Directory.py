@@ -45,7 +45,7 @@ class DirectoryTreeUI(Frame):
         self.nodes = dict()
         self.status = True
        
-        self.frame = tk.Frame(self, height = 200, width = 500)
+        self.frame = tk.Frame(self, height = 400, width = 500)
         self.tree = ttk.Treeview(self.frame)
 
         self.frame.place(
@@ -54,28 +54,23 @@ class DirectoryTreeUI(Frame):
             width=700,
             height=400,
         )
-        
-        self.insText1 = "Click SHOW button to show the server's directory tree."
+        self.insText1 = "Selected path."
         self.label1 = tk.Label(self.frame, text=self.insText1)
         self.label1.pack(fill = tk.X)
+        self.path = Text(self.frame, height = 1, width = 26, state = "disable")
+        self.path.pack(fill = tk.X)
 
         ysb = ttk.Scrollbar(self.frame, orient='vertical', command=self.tree.yview)
         xsb = ttk.Scrollbar(self.frame, orient='horizontal', command=self.tree.xview)
         self.tree.configure(yscroll=ysb.set, xscroll=xsb.set)
         self.tree.heading('#0', text='Server\'s Directory Tree', anchor='w')
         self.tree.pack(fill = tk.BOTH)
-
         self.tree.bind('<<TreeviewOpen>>', self.open_node)
         self.tree.bind("<<TreeviewSelect>>", self.select_node)
 
-        self.insText2 = "Selected path.\n\
-            Click SEND FILE TO FOLDER button to select a file you want to copy to this folder.\n\
-            Click COPY THIS FILE to copy the selected file to your computer (client)\n\
-            Click DELETE button to delete the file on this path.\nYou can click SHOW button again to see the changes."
+        self.insText2 = "Ấn nút SHOW để xem the server's directory tree."
         self.label2 = tk.Label(self.frame, text=self.insText2)
         self.label2.pack(fill = tk.X)
-        self.path = Text(self.frame, height = 1, width = 26, state = "disable")
-        self.path.pack(fill = tk.X)
 
         self.button_2 = Button(self, text = 'SHOW', width = 20, height = 5,
             borderwidth=0,

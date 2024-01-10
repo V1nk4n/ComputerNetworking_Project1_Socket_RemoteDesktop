@@ -61,7 +61,6 @@ def list_processes():
     list3 = list()
     for proc in psutil.process_iter():
         try:
-            # Get process name & pid from process object.
             name = proc.name()
             pid = proc.pid
             threads = proc.num_threads()
@@ -101,7 +100,7 @@ def app_process(client):
         list2 = list()
         list3 = list()
         option = int(msg)
-        # 0-kill
+        
         if option == 0:
             pid = client.recv(BUFFERSIZE).decode("utf8")
             pid = int(pid)
@@ -109,7 +108,6 @@ def app_process(client):
                 result = kill(pid)
             except:
                 result = 0
-        # 1-view
         elif option == 1:
             try:
                 status = client.recv(BUFFERSIZE).decode("utf8")
@@ -120,10 +118,8 @@ def app_process(client):
                 result = 1
             except:
                 result = 0
-        # 2-delete
         elif option == 2:
             result = 1
-        # 3 - start
         elif option == 3:
             program_name = client.recv(BUFFERSIZE).decode("utf8")
             try:

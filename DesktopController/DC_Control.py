@@ -24,25 +24,23 @@ class Control(Frame):
         self.grid(row=0, column=0, sticky="nsew")
         
         self.window = parent
-        
-        # initialize status to ready receiving data
+
         self.status = True
 
-        # label to display frames received from server
         self.label = tk.Label(self)
         self.label.place(x=30, y=0, width=WIDTH-60, height=HEIGHT-60)
 
-        # a button to stop receiving and return to main interface
         self.button_back = tk.Button(
             self,
             text="Back",
+            font=("Tim New Roman",15),
             bg="#fdebd3",
             fg="black",
-            font=("Tim New Roman",15),
+            borderwidth=3,
+            highlightthickness=2,
             command=lambda: self.click_back(),
-            relief="flat",
         )
-        self.button_back.place(x=167, y=HEIGHT-40, width=200, height=30)
+        self.button_back.place(x=350, y=HEIGHT-45, width=200, height=30)
 
         self.stop_event = Event()
 
@@ -87,8 +85,6 @@ class Control(Frame):
         # Đóng GUI
         self.destroy()
         
-        
-    # display frames continously
     def ChangeImage(self):
         while self.screenConnection:
             #Nhận chiều dài của hình ảnh ở kiểu byte
@@ -107,7 +103,7 @@ class Control(Frame):
             #Tạo 1 BytesIO cho phép đọc dữ liệu dạng byte
             image_byte_io = io.BytesIO(image_byte_array)
             #Mở hình ảnh
-            image = Image.open(image_byte_io).resize((WIDTH, HEIGHT))
+            image = Image.open(image_byte_io).resize((WIDTH-60, HEIGHT-60))
             #Tạo đối tượng PhotoImage để đưa lên window
             photo = ImageTk.PhotoImage(image)
             
@@ -120,8 +116,6 @@ class Control(Frame):
                 self.screenConnection.sendall("STOP".encode(FORMAT))
                 break
 
-        
-        # Return the main UI
     def KeyControl(self):
         #Lắng nghe bàn phím
         if self.key_status:

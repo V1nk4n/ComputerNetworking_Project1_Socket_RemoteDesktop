@@ -2,7 +2,7 @@ import os
 import pickle
 from tkinter import*
 import  pickle
-from RD_Constant import BACKGROUND, BUFFERSIZE, WIDTH, HEIGHT, FORMAT
+from RD_Constant import BUFFERSIZE
 
 
 def showTree(directoryConnection):
@@ -16,7 +16,7 @@ def showTree(directoryConnection):
     temp = directoryConnection.recv(BUFFERSIZE)
     directoryConnection.sendall(data)
 
-def sendListDirs(directoryConnection):
+def sendListDir(directoryConnection):
     path = directoryConnection.recv(BUFFERSIZE).decode()
     if not os.path.isdir(path):
         return [False, path]
@@ -29,7 +29,7 @@ def sendListDirs(directoryConnection):
         
         data = pickle.dumps(listTree)
         directoryConnection.sendall(str(len(data)).encode())
-        temp = directoryConnection.recv(9999999)
+        temp = directoryConnection.recv(BUFFERSIZE)
         directoryConnection.sendall(data)
         return [True, path]
     except:
@@ -50,7 +50,7 @@ def deleteFile(directoryConnection):
         return
 
 # copy file from client to server
-def copyFileToServer(directoryConnection):
+def sendFile(directoryConnection):
     received = directoryConnection.recv(BUFFERSIZE).decode()
     if (received == "-1"):
         directoryConnection.sendall("-1".encode())
@@ -73,8 +73,7 @@ def copyFileToServer(directoryConnection):
     except:
         directoryConnection.sendall("-1".encode())
 
-# copy file from server to client
-def copyFileToClient(directoryConnection):
+def copyFile(directoryConnection):
     filename = directoryConnection.recv(BUFFERSIZE).decode()
     if filename == "-1" or not os.path.isfile(filename):
         directoryConnection.sendall("-1".encode())
@@ -96,7 +95,7 @@ def directory(directoryConnection):
         if (mod == "SHOW"):
             showTree(directoryConnection)
             while True:
-                check = sendListDirs(directoryConnection)
+                check = sendListDir(directoryConnection)
                 if not check[0]:    
                     mod = check[1]
                     if (mod != "error"):
@@ -106,13 +105,13 @@ def directory(directoryConnection):
         # copy file from client to server
         elif (mod == "COPYTO"):
             directoryConnection.sendall("OK".encode())
-            copyFileToServer(directoryConnection)
+            sendFile(directoryConnection)
             isMod = False
 
         # copy file from server to client
         elif (mod == "COPY"):
             directoryConnection.sendall("OK".encode())
-            copyFileToClient(directoryConnection)
+            copyFile(directoryConnection)
             isMod = False
 
         elif (mod == "DEL"):

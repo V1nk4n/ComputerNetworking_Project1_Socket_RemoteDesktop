@@ -90,14 +90,14 @@ def start(root, client):
     tk.Button(
         pstart,
         text="Start",
+        font=("Tim New Roman",15),
         width=15,
         height=2,
         fg="black",
         bg="#fdebd3",
-        borderwidth=0,
-        highlightthickness=0,
+        borderwidth=3,
+        highlightthickness=2,
         command=lambda: send_start(client),
-        relief="flat",
     ).place(x=275, y=15)
     return
 
@@ -112,14 +112,14 @@ def kill(root, client):
     tk.Button(
         kill,
         text="Kill",
+        font=("Tim New Roman",15),
         width=15,
         height=2,
         fg="black",
         bg="#fdebd3",
-        borderwidth=0,
-        highlightthickness=0,
+        borderwidth=3,
+        highlightthickness=2,
         command=lambda: send_kill(client),
-        relief="flat",
     ).place(x=275, y=15)
     return
 
@@ -156,45 +156,42 @@ class AppProcessUI(Frame):
         self.button_process = Button(
             self,
             text="PROCESS",
+            font=("Tim New Roman",15),
             width=20,
             height=5,
             bg="#fdebd3",
             fg="black",
-            font=("Tim New Roman",15),
-            borderwidth=0,
-            highlightthickness=0,
+            borderwidth=3,
+            highlightthickness=2,
             command=lambda: switch(self.button_process, self.tab),
-            relief="flat",
         )
         self.button_process.place(x=170, y=375, width=135, height=50)
 
         self.button_list = Button(
             self,
             text="LIST",
+            font=("Tim New Roman",15),
             width=20,
             height=5,
             bg="#fdebd3",
             fg="black",
-            font=("Tim New Roman",15),
-            borderwidth=0,
-            highlightthickness=0,
+            borderwidth=3,
+            highlightthickness=2,
             command=lambda: _list(client, self.tab, self.button_process["text"]),
-            relief="flat",
         )
         self.button_list.place(x=170, y=437, width=135, height=50)
 
         self.button_start = Button(
             self,
             text="START",
+            font=("Tim New Roman",15),
             width=20,
             height=5,
             bg="#fdebd3",
             fg="black",
-            font=("Tim New Roman",15),
-            borderwidth=0,
-            highlightthickness=0,
+            borderwidth=3,
+            highlightthickness=2,
             command=lambda: start(parent, client),
-            relief="flat",
         )
         self.button_start.place(x=382, y=375, width=135, height=50)
 
@@ -206,10 +203,9 @@ class AppProcessUI(Frame):
             bg="#fdebd3",
             fg="black",
             font=("Tim New Roman",15),
-            borderwidth=0,
-            highlightthickness=0,
+            borderwidth=3,
+            highlightthickness=2,
             command=lambda: kill(parent, client),
-            relief="flat",
         )
         self.button_kill.place(x=382, y=437, width=135, height=50)
 
@@ -221,10 +217,9 @@ class AppProcessUI(Frame):
             bg="#fdebd3",
             fg="black",
             font=("Tim New Roman",15),
-            borderwidth=0,
-            highlightthickness=0,
+            borderwidth=3,
+            highlightthickness=2,
             command=lambda: clear(self.tab),
-            relief="flat",
         )
         self.button_clear.place(x=594, y=375, width=135, height=50)
 
@@ -236,8 +231,7 @@ class AppProcessUI(Frame):
             bg="#fdebd3",
             fg="black",
             font=("Tim New Roman",15),
-            borderwidth=0,
-            highlightthickness=0,
-            relief="flat",
+            borderwidth=3,
+            highlightthickness=2,
         )
         self.button_back.place(x=594, y=437, width=135, height=50)
