@@ -27,7 +27,7 @@ def back(temp):
     temp.destroy()
     menu_ui.tkraise()
     
-def back_dir(temp):
+def back_2(temp):
     temp.destroy()
     menu_ui.tkraise()
     main_connect.sendall("QUIT".encode(FORMAT))
@@ -77,13 +77,13 @@ def control_desktop():
 def directory_tree():
     main_connect.sendall(bytes("DIRECTORY", "utf8"))
     temp = DirectoryTree(window, main_connect)
-    temp.button_back.configure(command=lambda: back_dir(temp))
+    temp.button_back.configure(command=lambda: back_2(temp))
     return
 
 def app_process():
     main_connect.sendall("PROCESS".encode(FORMAT))
     temp = AppProcess(window, main_connect)
-    temp.button_back.configure(command=lambda: back(temp))
+    temp.button_back.configure(command=lambda: back_2(temp))
     return
 
 def shutdown_logout():
