@@ -6,7 +6,7 @@ from tkinter.filedialog import asksaveasfile
 from DC_Constant import BACKGROUND, BUFFERSIZE, WIDTH, HEIGHT, FORMAT
 from PIL import Image, ImageTk
 
-class DesktopUI(Frame):
+class Screen(Frame):
     def __init__(self, parent, screen_con):
         Frame.__init__(self, parent)
         self.configure(

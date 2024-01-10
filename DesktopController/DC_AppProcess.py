@@ -124,7 +124,7 @@ def kill(root, client):
     return
 
 
-class AppProcessUI(Frame):
+class AppProcess(Frame):
     def __init__(self, parent, client):
         Frame.__init__(self, parent)
         self.configure(

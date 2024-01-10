@@ -2,65 +2,66 @@ import socket
 from tkinter import *
 from tkinter import messagebox
 from tkinter.ttk import *
+
 from DC_Home import Menu
 from DC_Login import Login
-import DC_ShutOut as so
-import DC_Mac as ma
-from DC_Screen import DesktopUI
+import DC_ShutOut as sot
+import DC_Mac as mac
+from DC_Screen import Screen
 from DC_Control import Control
-from DC_KeyLogger import KeyloggerUI
-from DC_AppProcess import AppProcessUI
-from DC_Directory import DirectoryTreeUI
+from DC_KeyLogger import Keylogger
+from DC_AppProcess import AppProcess
+from DC_Directory import DirectoryTree
+
 from DC_Constant import FORMAT, HOST, SERVER_PORT
 
-com_con = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+main_connect = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 window = Tk()
 window.configure(bg="#000")
 window.title("Remote Desktop Controller")
 window.resizable(False, False)
-frame_login = Login(window)
+login_ui = Login(window)
 
 def back(temp):
     temp.destroy()
-    frame_hp.tkraise()
-    # com_con.sendall(bytes("QUIT", "utf8"))
+    menu_ui.tkraise()
 
 def live_screen():
-    com_con.sendall("LIVESCREEN".encode(FORMAT))
+    main_connect.sendall("LIVESCREEN".encode(FORMAT))
     screen_con = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     screen_con.connect((HOST,SERVER_PORT))
-    temp = DesktopUI(window, screen_con)
+    temp = Screen(window, screen_con)
     if temp.status == False:
         back(temp)
     return
 
 def mac_address():
-    com_con.sendall("MAC".encode(FORMAT))
-    ma.mac_addr(com_con)
+    main_connect.sendall("MAC".encode(FORMAT))
+    mac.mac_addr(main_connect)
     return
 
 def disconnect():
-    com_con.sendall("QUIT".encode(FORMAT))
-    frame_hp.destroy()
+    main_connect.sendall("QUIT".encode(FORMAT))
+    menu_ui.destroy()
     window.destroy()
     return
 
-def keylogger():
-    com_con.sendall("KEYLOG".encode(FORMAT))
-    temp = KeyloggerUI(window, com_con)
+def key_logger():
+    main_connect.sendall("KEYLOG".encode(FORMAT))
+    temp = Keylogger(window, main_connect)
     temp.button_back.configure(command=lambda: back(temp))
     return
 
 def control_desktop():
-    com_con.sendall("CONTROL".encode(FORMAT))
+    main_connect.sendall("CONTROL".encode(FORMAT))
     screen_con = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     screen_con.connect((HOST,SERVER_PORT))
     key_con = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     key_con.connect((HOST,SERVER_PORT))
     mouse_con = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     mouse_con.connect((HOST,SERVER_PORT))
-    temp = Control(window, com_con, screen_con, key_con, mouse_con)
+    temp = Control(window, main_connect, screen_con, key_con, mouse_con)
     if temp.status == False:
         back(temp)
         screen_con.close()
@@ -69,51 +70,51 @@ def control_desktop():
     return
 
 def directory_tree():
-    com_con.sendall(bytes("DIRECTORY", "utf8"))
-    temp = DirectoryTreeUI(window, com_con)
-    temp.button_6.configure(command=lambda: back(temp))
+    main_connect.sendall(bytes("DIRECTORY", "utf8"))
+    temp = DirectoryTree(window, main_connect)
+    temp.button_back.configure(command=lambda: back(temp))
     return
 
 def app_process():
-    com_con.sendall("PROCESS".encode(FORMAT))
-    temp = AppProcessUI(window, com_con)
+    main_connect.sendall("PROCESS".encode(FORMAT))
+    temp = AppProcess(window, main_connect)
     temp.button_back.configure(command=lambda: back(temp))
     return
 
 def shutdown_logout():
-    com_con.sendall("SHUTOUT".encode(FORMAT))
-    temp = so.shutdown_logout(window, com_con)
+    main_connect.sendall("SHUTOUT".encode(FORMAT))
+    temp = sot.shutdown_logout(window, main_connect)
     return
 
-def show_main_ui():
-    frame_login.destroy()
-    global frame_hp
-    frame_hp = Menu(window)
-    frame_hp.button_Live_Screen.configure(command=live_screen)
-    frame_hp.button_App_Process.configure(command=app_process)
-    frame_hp.button_Keylogger.configure(command=keylogger)
-    frame_hp.button_Mac_Address.configure(command=mac_address)
-    frame_hp.button_Directory_Tree.configure(command=directory_tree)
-    frame_hp.button_Shut_Down.configure(command=shutdown_logout)
-    frame_hp.button_Control_Desktop.configure(command=control_desktop)
-    frame_hp.button_Disconnect.configure(command=disconnect)
+def show_menu_ui():
+    login_ui.destroy()
+    global menu_ui
+    menu_ui = Menu(window)
+    menu_ui.button_Live_Screen.configure(command=live_screen)
+    menu_ui.button_App_Process.configure(command=app_process)
+    menu_ui.button_Keylogger.configure(command=key_logger)
+    menu_ui.button_Mac_Address.configure(command=mac_address)
+    menu_ui.button_Directory_Tree.configure(command=directory_tree)
+    menu_ui.button_Shut_Down.configure(command=shutdown_logout)
+    menu_ui.button_Control_Desktop.configure(command=control_desktop)
+    menu_ui.button_Disconnect.configure(command=disconnect)
     return
 
-def connect(frame):
-    global com_con
+def connect(login):
+    global main_connect
     # ip = frame.ip_input.get()
     try:
         # client.connect((HOST, SERVER_PORT))
-        show_main_ui()
+        show_menu_ui()
     except Exception as e:
         print(e)
-        messagebox.showerror(message="Cannot connect!")
+        messagebox.showerror(message="Error in connection!")
     return
 
 
 def main():
-    com_con.connect((HOST, SERVER_PORT))
-    frame_login.connect.configure(command=lambda: connect(frame_login))
+    main_connect.connect((HOST, SERVER_PORT))
+    login_ui.connect.configure(command=lambda: connect(login_ui))
     window.mainloop()
 
 

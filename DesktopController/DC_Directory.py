@@ -24,7 +24,7 @@ def listDirs(dire_con, path):
     loaded_list = pickle.loads(data)
     return loaded_list
 
-class DirectoryTreeUI(Frame):
+class DirectoryTree(Frame):
     def __init__(self, parent, dire_con):
         Frame.__init__(self, parent)
 
@@ -72,7 +72,7 @@ class DirectoryTreeUI(Frame):
         self.label2 = tk.Label(self.frame, text=self.insText2)
         self.label2.pack(fill = tk.X)
 
-        self.button_2 = Button(self, text = 'SHOW', width = 20, height = 5,
+        self.button_show_tree = Button(self, text = 'SHOW', width = 20, height = 5,
             borderwidth=0,
             highlightthickness=0,
             command=self.showTree,
@@ -81,9 +81,9 @@ class DirectoryTreeUI(Frame):
             font=("Tim New Roman",15),
             relief="flat"
         )
-        self.button_2.place(x=149,y=16,width=150,height=53)
+        self.button_show_tree.place(x=149,y=16,width=150,height=53)
         # chi gui vao folder th
-        self.button_3 = Button(self, text = 'SEND FILE', width = 20, height = 5,
+        self.button_send_file = Button(self, text = 'SEND FILE', width = 20, height = 5,
             borderwidth=0,
             highlightthickness=0,
             command=self.copyFileToServer,
@@ -92,9 +92,9 @@ class DirectoryTreeUI(Frame):
             font=("Tim New Roman",15),
             relief="flat"
         )
-        self.button_3.place(x=733,y=145,width=150,height=53)
+        self.button_send_file.place(x=733,y=145,width=150,height=53)
         # chi copy file
-        self.button_4 = Button(self, text = 'COPY FILE', width = 20, height = 5, 
+        self.button_copy_file = Button(self, text = 'COPY FILE', width = 20, height = 5, 
             borderwidth=0,
             highlightthickness=0,
             command=self.copyFileToClient,
@@ -103,8 +103,8 @@ class DirectoryTreeUI(Frame):
             font=("Tim New Roman",15),
             relief="flat"
         )
-        self.button_4.place(x=733,y=258,width=150,height=53)
-        self.button_5 = Button(self, text = 'DELETE', width = 20, height = 5, 
+        self.button_copy_file.place(x=733,y=258,width=150,height=53)
+        self.button_delete = Button(self, text = 'DELETE', width = 20, height = 5, 
             borderwidth=0,
             highlightthickness=0,
             command=self.deleteFile,
@@ -113,8 +113,8 @@ class DirectoryTreeUI(Frame):
             font=("Tim New Roman",15),
             relief="flat"
         )
-        self.button_5.place(x=733,y=371,width=150,height=53)
-        self.button_6 = Button(self, text = 'BACK', width = 20, height = 5,
+        self.button_delete.place(x=733,y=371,width=150,height=53)
+        self.button_back = Button(self, text = 'BACK', width = 20, height = 5,
             borderwidth=0,
             highlightthickness=0,
             command= self.click_back,
@@ -123,7 +123,7 @@ class DirectoryTreeUI(Frame):
             font=("Tim New Roman",15),
             relief="flat"
         )
-        self.button_6.place(x=432,y=16,width=150,height=53)
+        self.button_back.place(x=250,y=16,width=150,height=53)
 
     def insert_node(self, parent, text, abspath, isFolder):
         node = self.tree.insert(parent, 'end', text=text, open=False)

