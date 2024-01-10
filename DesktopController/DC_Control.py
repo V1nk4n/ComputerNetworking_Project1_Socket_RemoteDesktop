@@ -38,7 +38,7 @@ class Control(Frame):
             text="Back",
             bg="#fdebd3",
             fg="black",
-            font="Calibri 15",
+            font=("Tim New Roman",15),
             command=lambda: self.click_back(),
             relief="flat",
         )

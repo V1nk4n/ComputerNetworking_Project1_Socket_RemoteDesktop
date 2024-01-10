@@ -65,8 +65,8 @@ try:
             app_process()
         elif "MAC" in msg:
             mac_address()
-        # elif "DIRECTORY" in msg:
-        #     directory_tree()
+        elif "DIRECTORY" in msg:
+            directory_tree()
         elif "QUIT" in msg:
             com_con.close()
             s.close()

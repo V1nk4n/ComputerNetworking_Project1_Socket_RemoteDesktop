@@ -3,10 +3,8 @@ import tkinter as tk
 from threading import Thread
 from tkinter import Frame
 from tkinter.filedialog import asksaveasfile
-
 from DC_Constant import BACKGROUND, BUFFERSIZE, WIDTH, HEIGHT, FORMAT
 from PIL import Image, ImageTk
-
 
 class DesktopUI(Frame):
     def __init__(self, parent, screen_con):
@@ -41,7 +39,7 @@ class DesktopUI(Frame):
             text="Save",
             bg="#fdebd3",
             fg="black",
-            font="Calibri 15",
+            font=("Tim New Roman",15),
             command=lambda: self.click_save(),
             relief="flat",
         )
@@ -53,7 +51,7 @@ class DesktopUI(Frame):
             text="Back",
             bg="#fdebd3",
             fg="black",
-            font="Calibri 15",
+            font=("Tim New Roman",15),
             command=lambda: self.click_back(),
             relief="flat",
         )

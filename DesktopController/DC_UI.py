@@ -13,7 +13,6 @@ from DC_Control import Control
 from DC_KeyLogger import KeyloggerUI
 from DC_AppProcess import AppProcessUI
 from DC_Directory import DirectoryTreeUI
-
 from DC_Constant import FORMAT, HOST, SERVER_PORT
 
 # global variables

@@ -4,7 +4,7 @@ import tkinter.ttk as ttk
 import pickle
 from tkinter import Text, Button,filedialog, messagebox, Frame
 from tkinter import*
-from DC_Constant import BACKGROUND, BUFFERSIZE, WIDTH, HEIGHT, FORMAT
+from DC_Constant import BACKGROUND, BUFFERSIZE, WIDTH, HEIGHT
 
 def listDirs(dire_con, path):
     dire_con.sendall(path.encode())
@@ -29,14 +29,14 @@ class DirectoryTreeUI(Frame):
         Frame.__init__(self, parent)
 
         self.configure(
-            bg = "black",
-            height = 600,
-            width = 1000,
-            bd = 0,
-            highlightthickness = 0,
-            relief = "ridge"
+            bg=BACKGROUND,
+            height=HEIGHT,
+            width=WIDTH,
+            bd=0,
+            highlightthickness=0,
+            relief="ridge",
         )
-        parent.geometry("1000x600+200+200")
+        parent.geometry("900x500+200+200")
         self.grid(row=0, column=0, sticky="nsew")
 
 
@@ -49,10 +49,10 @@ class DirectoryTreeUI(Frame):
         self.tree = ttk.Treeview(self.frame)
 
         self.frame.place(
-            x=53,
-            y=162,
-            width=713,
-            height=404
+            x=16,
+            y=85,
+            width=700,
+            height=400,
         )
         
         self.insText1 = "Click SHOW button to show the server's directory tree."
@@ -81,69 +81,54 @@ class DirectoryTreeUI(Frame):
             borderwidth=0,
             highlightthickness=0,
             command=self.showTree,
-            fg = '#e64040', bg = '#4d4d4d', font='Helvetica 15 bold',
+            fg = "black",
+            bg = "#fdebd3", 
+            font=("Tim New Roman",15),
             relief="flat"
         )
-        self.button_2.place(
-            x=400,
-            y=80,
-            width=135,
-            height=53
-        )
+        self.button_2.place(x=149,y=16,width=150,height=53)
         # chi gui vao folder th
         self.button_3 = Button(self, text = 'SEND FILE', width = 20, height = 5,
             borderwidth=0,
             highlightthickness=0,
             command=self.copyFileToServer,
-            fg = '#e64040', bg = '#4d4d4d', font='Helvetica 12 bold',
+            fg = "black", 
+            bg = "#fdebd3", 
+            font=("Tim New Roman",15),
             relief="flat"
         )
-        self.button_3.place(
-            x=810,
-            y=238,
-            width=150,
-            height=53
-        )
+        self.button_3.place(x=733,y=145,width=150,height=53)
         # chi copy file
         self.button_4 = Button(self, text = 'COPY FILE', width = 20, height = 5, 
             borderwidth=0,
             highlightthickness=0,
             command=self.copyFileToClient,
-            fg = '#e64040', bg = '#4d4d4d', font='Helvetica 12 bold',
+            fg = "black", 
+            bg = "#fdebd3", 
+            font=("Tim New Roman",15),
             relief="flat"
         )
-        self.button_4.place(
-            x=810,
-            y=317,
-            width=150,
-            height=53
-        )
+        self.button_4.place(x=733,y=258,width=150,height=53)
         self.button_5 = Button(self, text = 'DELETE', width = 20, height = 5, 
             borderwidth=0,
             highlightthickness=0,
             command=self.deleteFile,
-            fg = '#e64040', bg = '#4d4d4d', font='Helvetica 12 bold',
+            fg = "black", 
+            bg = "#fdebd3", 
+            font=("Tim New Roman",15),
             relief="flat"
         )
-        self.button_5.place(
-            x=810,
-            y=396,
-            width=150,
-            height=53
-        )
+        self.button_5.place(x=733,y=371,width=150,height=53)
         self.button_6 = Button(self, text = 'BACK', width = 20, height = 5,
             borderwidth=0,
             highlightthickness=0,
             command= self.click_back,
-            fg = '#e64040', bg = '#4d4d4d', font='Helvetica 15 bold',
+            fg = "black", 
+            bg = "#fdebd3", 
+            font=("Tim New Roman",15),
             relief="flat"
         )
-        self.button_6.place(
-            x=580,
-            y=80,
-            width=135,
-            height=53
-        )
+        self.button_6.place(x=432,y=16,width=150,height=53)
 
     def insert_node(self, parent, text, abspath, isFolder):
         node = self.tree.insert(parent, 'end', text=text, open=False)

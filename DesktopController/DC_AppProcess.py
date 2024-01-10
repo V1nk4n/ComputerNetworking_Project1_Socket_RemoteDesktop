@@ -3,8 +3,7 @@ import struct
 import tkinter as tk
 from tkinter import *
 from tkinter import ttk
-
-from DC_Constant import BACKGROUND, BUFFERSIZE
+from DC_Constant import BACKGROUND, BUFFERSIZE, WIDTH, HEIGHT
 
 
 def recvall(sock, size):
@@ -84,44 +83,44 @@ def send_start(client):
 def start(root, client):
     global pname
     pstart = tk.Toplevel(root)
-    pstart["bg"] = "black"
-    pstart.geometry("420x50")
+    pstart["bg"] = BACKGROUND
+    pstart.geometry("420x70")
     pname = tk.StringVar(pstart)
-    tk.Entry(pstart, textvariable=pname, width=38, borderwidth=5).place(x=8, y=20)
+    tk.Entry(pstart, textvariable=pname, width=38, borderwidth=5).place(x=10, y=20)
     tk.Button(
         pstart,
         text="Start",
-        width=14,
+        width=15,
         height=2,
-        fg="white",
-        bg="IndianRed3",
+        fg="black",
+        bg="#fdebd3",
         borderwidth=0,
         highlightthickness=0,
         command=lambda: send_start(client),
         relief="flat",
-    ).place(x=300, y=15)
+    ).place(x=275, y=15)
     return
 
 
 def kill(root, client):
     global pid
     kill = tk.Toplevel(root)
-    kill["bg"] = "black"
-    kill.geometry("420x50")
+    kill["bg"] = BACKGROUND
+    kill.geometry("420x70")
     pid = tk.StringVar(kill)
-    tk.Entry(kill, textvariable=pid, width=38, borderwidth=5).place(x=8, y=20)
+    tk.Entry(kill, textvariable=pid, width=38, borderwidth=5).place(x=10, y=20)
     tk.Button(
         kill,
         text="Kill",
-        width=14,
-        height=1,
-        fg="white",
-        bg="IndianRed3",
+        width=15,
+        height=2,
+        fg="black",
+        bg="#fdebd3",
         borderwidth=0,
         highlightthickness=0,
         command=lambda: send_kill(client),
         relief="flat",
-    ).place(x=300, y=15)
+    ).place(x=275, y=15)
     return
 
 
@@ -130,19 +129,18 @@ class AppProcessUI(Frame):
         Frame.__init__(self, parent)
         self.configure(
             bg=BACKGROUND,
-            height=600,
-            width=1000,
+            height=HEIGHT,
+            width=WIDTH,
             bd=0,
             highlightthickness=0,
             relief="ridge",
         )
-
-        parent.geometry("1000x600+200+200")
+        parent.geometry("900x500+200+200")
         self.grid(row=0, column=0, sticky="nsew")
 
         self.tab = ttk.Treeview(self, height=18, selectmode="browse")
         self.scroll = tk.Scrollbar(self, orient="vertical", command=self.tab.yview)
-        self.scroll.place(x=850, y=40, height=404)
+        self.scroll.place(x=803, y=12, height=350)
         self.tab.configure(yscrollcommand=self.scroll.set)
         self.tab["columns"] = ("Name", "ID", "Count")
         self.tab.column("#0", width=0)
@@ -153,7 +151,7 @@ class AppProcessUI(Frame):
         self.tab.heading("Name", text="Name Application")
         self.tab.heading("ID", text="ID Application")
         self.tab.heading("Count", text="Count Threads")
-        self.tab.place(x=140, y=40, width=713, height=404)
+        self.tab.place(x=93, y=12, width=713, height=350)
 
         self.button_process = Button(
             self,
@@ -162,13 +160,13 @@ class AppProcessUI(Frame):
             height=5,
             bg="#fdebd3",
             fg="black",
-            font="Calibri 15",
+            font=("Tim New Roman",15),
             borderwidth=0,
             highlightthickness=0,
             command=lambda: switch(self.button_process, self.tab),
             relief="flat",
         )
-        self.button_process.place(x=80, y=460, width=135, height=50)
+        self.button_process.place(x=170, y=375, width=135, height=50)
 
         self.button_list = Button(
             self,
@@ -177,13 +175,13 @@ class AppProcessUI(Frame):
             height=5,
             bg="#fdebd3",
             fg="black",
-            font="Calibri 15",
+            font=("Tim New Roman",15),
             borderwidth=0,
             highlightthickness=0,
             command=lambda: _list(client, self.tab, self.button_process["text"]),
             relief="flat",
         )
-        self.button_list.place(x=80, y=520, width=135, height=50)
+        self.button_list.place(x=170, y=437, width=135, height=50)
 
         self.button_start = Button(
             self,
@@ -192,13 +190,13 @@ class AppProcessUI(Frame):
             height=5,
             bg="#fdebd3",
             fg="black",
-            font="Calibri 15",
+            font=("Tim New Roman",15),
             borderwidth=0,
             highlightthickness=0,
             command=lambda: start(parent, client),
             relief="flat",
         )
-        self.button_start.place(x=450, y=460, width=135, height=50)
+        self.button_start.place(x=382, y=375, width=135, height=50)
 
         self.button_kill = Button(
             self,
@@ -207,13 +205,13 @@ class AppProcessUI(Frame):
             height=5,
             bg="#fdebd3",
             fg="black",
-            font="Calibri 15",
+            font=("Tim New Roman",15),
             borderwidth=0,
             highlightthickness=0,
             command=lambda: kill(parent, client),
             relief="flat",
         )
-        self.button_kill.place(x=450, y=520, width=135, height=50)
+        self.button_kill.place(x=382, y=437, width=135, height=50)
 
         self.button_clear = Button(
             self,
@@ -222,13 +220,13 @@ class AppProcessUI(Frame):
             height=5,
             bg="#fdebd3",
             fg="black",
-            font="Calibri 15",
+            font=("Tim New Roman",15),
             borderwidth=0,
             highlightthickness=0,
             command=lambda: clear(self.tab),
             relief="flat",
         )
-        self.button_clear.place(x=820, y=460, width=135, height=50)
+        self.button_clear.place(x=594, y=375, width=135, height=50)
 
         self.button_back = Button(
             self,
@@ -237,9 +235,9 @@ class AppProcessUI(Frame):
             height=5,
             bg="#fdebd3",
             fg="black",
-            font="Calibri 15",
+            font=("Tim New Roman",15),
             borderwidth=0,
             highlightthickness=0,
             relief="flat",
         )
-        self.button_back.place(x=820, y=520, width=135, height=50)
+        self.button_back.place(x=594, y=437, width=135, height=50)
