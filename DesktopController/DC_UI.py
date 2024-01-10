@@ -30,7 +30,7 @@ def back(temp):
 def live_screen():
     main_connect.sendall("LIVESCREEN".encode(FORMAT))
     screen_con = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    screen_con.connect((HOST,SERVER_PORT))
+    screen_con.connect((IP,SERVER_PORT))
     temp = Screen(window, screen_con)
     if temp.status == False:
         back(temp)
@@ -56,11 +56,11 @@ def key_logger():
 def control_desktop():
     main_connect.sendall("CONTROL".encode(FORMAT))
     screen_con = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    screen_con.connect((HOST,SERVER_PORT))
+    screen_con.connect((IP,SERVER_PORT))
     key_con = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    key_con.connect((HOST,SERVER_PORT))
+    key_con.connect((IP,SERVER_PORT))
     mouse_con = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    mouse_con.connect((HOST,SERVER_PORT))
+    mouse_con.connect((IP,SERVER_PORT))
     temp = Control(window, main_connect, screen_con, key_con, mouse_con)
     if temp.status == False:
         back(temp)
@@ -102,6 +102,7 @@ def show_menu_ui():
 
 def connect(login):
     global main_connect
+    global IP
     IP = login.ip_input.get()
     print(IP)
     try:
