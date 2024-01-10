@@ -6,6 +6,7 @@ import io
 from PIL import ImageGrab
 import tkinter as tk
 import keyboard
+
 def recvList(conn):
     list = []
     item = conn.recv(1024).decode(FORMAT)
@@ -57,13 +58,19 @@ def clickRight(event):
 def scroll(event):
     print(f"scroll,{event.delta}, 0")
 
-def press(event):
-        #Truyền phím nhập
-        buffer = event.char
-        print(buffer)
-     
-for i in range(150):
-    keyboard.unblock_key(i)
+def scroll(self, event):
+        #Cuộn chuột
+    x = event.x
+    y = event.y
+    buffer = f"scroll,{x},{y}"
+    print(buffer)
+    buffer =""
+
+window = tk.Tk()
+window.bind("<MouseWheel>", scroll)
+window.mainloop
+
+
 # s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 # s.bind((HOST, SERVER_PORT))
 # s.listen()
