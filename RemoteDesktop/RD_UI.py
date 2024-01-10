@@ -59,9 +59,10 @@ def get_ip_address():
 try:
     global s
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    host =''
     IP = get_ip_address()
     print(IP)
-    s.bind((IP, SERVER_PORT))
+    s.bind((host, SERVER_PORT))
     s.listen(100)
     global com_con
     main_connection, main_addr = s.accept()

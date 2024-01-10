@@ -103,6 +103,7 @@ def show_menu_ui():
 def connect(login):
     global main_connect
     IP = login.ip_input.get()
+    print(IP)
     try:
         main_connect.connect((IP, SERVER_PORT))
         show_menu_ui()

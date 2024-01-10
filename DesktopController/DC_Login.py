@@ -38,7 +38,6 @@ class Login(Frame):
             relief="flat",
         )
         self.ip_input.place(x=300,y=133,width=300,height=50,)
-        self.ip_input.insert(END, "192.168.1.8")
 
         self.connect = Button(
             self,
