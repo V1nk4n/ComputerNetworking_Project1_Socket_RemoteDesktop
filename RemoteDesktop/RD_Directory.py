@@ -119,8 +119,8 @@ def directory(directoryConnection):
             deleteFile(directoryConnection)
             isMod = False
 
-        elif (mod == "STOP"):
+        elif (mod == "QUIT"):
             return
         
-        # else:
-        #     directoryConnection.sendall("-1".encode())
+        else:
+            directoryConnection.sendall("-1".encode())

@@ -257,4 +257,4 @@ class DirectoryTree(Frame):
 
     def click_back(self):
         self.status = False
-        self.client.sendall("STOP".encode(FORMAT))
+        

@@ -26,6 +26,11 @@ login_ui = Login(window)
 def back(temp):
     temp.destroy()
     menu_ui.tkraise()
+    
+def back_dir(temp):
+    temp.destroy()
+    menu_ui.tkraise()
+    main_connect.sendall("QUIT".encode(FORMAT))
 
 def live_screen():
     main_connect.sendall("LIVESCREEN".encode(FORMAT))
@@ -72,7 +77,7 @@ def control_desktop():
 def directory_tree():
     main_connect.sendall(bytes("DIRECTORY", "utf8"))
     temp = DirectoryTree(window, main_connect)
-    temp.button_back.configure(command=lambda: back(temp))
+    temp.button_back.configure(command=lambda: back_dir(temp))
     return
 
 def app_process():
