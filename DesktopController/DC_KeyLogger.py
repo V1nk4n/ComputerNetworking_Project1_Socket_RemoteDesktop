@@ -68,7 +68,7 @@ class Keylogger(Frame):
             bd=0,
             highlightthickness=0,
         )
-        self.box.place(x=200, y=100, width=500, height=360)
+        self.box.place(x=200, y=29, width=500, height=360)
 
         self.button_bind = Button(
             self,
@@ -83,7 +83,7 @@ class Keylogger(Frame):
             command=lambda: bind(client, self.button_bind),
         )
 
-        self.button_bind.place(x=733, y=150, width=135, height=53.0)
+        self.button_bind.place(x=733, y=113, width=135, height=53.0)
 
         self.button_lock = Button(
             self,
@@ -98,7 +98,7 @@ class Keylogger(Frame):
             command=lambda: lock(client, self.button_lock),
         )
 
-        self.button_lock.place(x=733, y=300, width=135, height=53)
+        self.button_lock.place(x=733, y=250, width=135, height=53)
 
         self.button_show = Button(
             self,
@@ -113,7 +113,7 @@ class Keylogger(Frame):
             command=lambda: show(client, self.box),
         )
 
-        self.button_show.place(x=32, y=150, width=135, height=53)
+        self.button_show.place(x=32, y=113, width=135, height=53)
 
         self.button_delete = Button(
             self,
@@ -128,7 +128,7 @@ class Keylogger(Frame):
             command=lambda: delete(self.box),
         )
 
-        self.button_delete.place(x=32, y=300, width=135, height=53)
+        self.button_delete.place(x=32, y=250, width=135, height=53)
 
         self.button_back = Button(
             self,
@@ -143,4 +143,4 @@ class Keylogger(Frame):
             command=back,
         )
         
-        self.button_back.place(x=20, y=350, width=200, height=30)
+        self.button_back.place(x=382, y=418, width=135, height=53)

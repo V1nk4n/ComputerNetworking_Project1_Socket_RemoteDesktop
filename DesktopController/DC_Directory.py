@@ -123,7 +123,7 @@ class DirectoryTree(Frame):
             font=("Tim New Roman",15),
             relief="flat"
         )
-        self.button_back.place(x=250,y=16,width=150,height=53)
+        self.button_back.place(x=433,y=16,width=150,height=53)
 
     def insert_node(self, parent, text, abspath, isFolder):
         node = self.tree.insert(parent, 'end', text=text, open=False)
