@@ -1,5 +1,6 @@
 import socket
 import tkinter as tk
+import psutil
 
 import RD_Screen as scr
 import RD_Controlled as ctr
@@ -46,23 +47,25 @@ def directory_tree():
     dir.directory(main_connection)
     return
 
-def get_ip_address():
+def get_wifi_ip_address():
     try:
-        # Lấy địa chỉ IP của máy thông qua một kết nối mạng
-        hostname = socket.gethostname()
-        ip_address = socket.gethostbyname(hostname)
-        return ip_address
-    except socket.error as e:
+        # Lặp qua tất cả các giao diện mạng
+        for interface, addrs in psutil.net_if_addrs().items():
+            for addr in addrs:
+                # Kiểm tra xem địa chỉ đó có phải là địa chỉ IP không
+                if addr.family == socket.AF_INET and "Wi-Fi" in interface:
+                    return addr.address
+    except Exception as e:
         print(f"Error: {e}")
-        return None
+    return None
     
 try:
     global s
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     host ='localhost'
-    IP = get_ip_address()
+    IP = get_wifi_ip_address()
     print(IP)
-    s.bind((host, SERVER_PORT))
+    s.bind((IP, SERVER_PORT))
     s.listen(100)
     global com_con
     main_connection, main_addr = s.accept()
