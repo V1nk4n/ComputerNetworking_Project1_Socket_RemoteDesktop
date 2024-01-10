@@ -30,7 +30,7 @@ def back(temp):
 def back_2(temp):
     temp.destroy()
     menu_ui.tkraise()
-    main_connect.sendall("QUIT".encode(FORMAT))
+    main_connect.sendall("STOP".encode(FORMAT))
 
 def live_screen():
     main_connect.sendall("LIVESCREEN".encode(FORMAT))

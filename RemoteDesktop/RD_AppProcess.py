@@ -93,7 +93,7 @@ def app_process(client):
     global msg
     while True:
         msg = client.recv(BUFFERSIZE).decode("utf8")
-        if "QUIT" in msg and len(msg) < 20:
+        if "STOP" in msg and len(msg) < 20:
             return
         result = 0
         list1 = list()

