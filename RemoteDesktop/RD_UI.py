@@ -59,7 +59,7 @@ def get_ip_address():
 try:
     global s
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    host =''
+    host ='localhost'
     IP = get_ip_address()
     print(IP)
     s.bind((host, SERVER_PORT))
