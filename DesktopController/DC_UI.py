@@ -55,7 +55,7 @@ def disconnect():
 def key_logger():
     main_connect.sendall("KEYLOG".encode(FORMAT))
     temp = Keylogger(window, main_connect)
-    temp.button_back.configure(command=lambda: back(temp))
+    temp.button_back.configure(command=lambda: back_2(temp))
     return
 
 def control_desktop():
