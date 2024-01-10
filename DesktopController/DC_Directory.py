@@ -38,12 +38,11 @@ class DirectoryTree(Frame):
         )
         parent.geometry("900x500+200+200")
         self.grid(row=0, column=0, sticky="nsew")
-
+        self.status = True
 
         self.client =  dire_con
         self.currPath = " "
         self.nodes = dict()
-        self.status = True
        
         self.frame = tk.Frame(self, height = 400, width = 500)
         self.tree = ttk.Treeview(self.frame)
@@ -257,4 +256,5 @@ class DirectoryTree(Frame):
 
     def click_back(self):
         self.status = False
-        
+        self.destroy()
+        self.client.sendall("STOP".encode())

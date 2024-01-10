@@ -5,125 +5,6 @@ from tkinter import *
 from tkinter import ttk
 from DC_Constant import BACKGROUND, BUFFERSIZE, WIDTH, HEIGHT
 
-
-def recvall(sock, size):
-    message = bytearray()
-    while len(message) < size:
-        buffer = sock.recv(size - len(message))
-        if not buffer:
-            raise EOFError("Could not receive all expected data!")
-        message.extend(buffer)
-    return bytes(message)
-
-
-def receive(client):
-    packed = recvall(client, struct.calcsize("!I"))
-    size = struct.unpack("!I", packed)[0]
-    data = recvall(client, size)
-    return data
-
-
-def switch(button, tab):
-    if button["text"] == "PROCESS":
-        button.configure(text="APPLICATION")
-        tab.heading("Name", text="Name Process")
-        tab.heading("ID", text="ID Process")
-        tab.heading("Count", text="Count Threads")
-    else:
-        button.configure(text="PROCESS")
-        tab.heading("Name", text="Name Application")
-        tab.heading("ID", text="ID Application")
-        tab.heading("Count", text="Count Threads")
-    return
-
-
-def send_kill(client):
-    global pid
-    client.sendall(bytes("0", "utf8"))
-    client.sendall(bytes(str(pid.get()), "utf8"))
-    message = client.recv(BUFFERSIZE).decode("utf8")
-    if "1" in message:
-        tk.messagebox.showinfo(message="Đã diệt!")
-    else:
-        tk.messagebox.showerror(message="Lỗi!")
-    return
-
-
-def _list(client, tab, s):
-    client.sendall(bytes("1", "utf8"))
-    client.sendall(bytes(s, "utf8"))
-    list1 = receive(client)
-    list1 = pickle.loads(list1)
-    list2 = receive(client)
-    list2 = pickle.loads(list2)
-    list3 = receive(client)
-    list3 = pickle.loads(list3)
-    for i in tab.get_children():
-        tab.delete(i)
-    for i in range(len(list1)):
-        tab.insert(
-            parent="", index="end", text="", values=(list1[i], list2[i], list3[i])
-        )
-    return
-
-
-def clear(tab):
-    for i in tab.get_children():
-        tab.delete(i)
-    return
-
-
-def send_start(client):
-    global pname
-    client.sendall(bytes("3", "utf8"))
-    client.sendall(bytes(str(pname.get()), "utf8"))
-    return
-
-
-def start(root, client):
-    global pname
-    pstart = tk.Toplevel(root)
-    pstart["bg"] = BACKGROUND
-    pstart.geometry("420x70")
-    pname = tk.StringVar(pstart)
-    tk.Entry(pstart, textvariable=pname, width=38, borderwidth=5).place(x=10, y=20)
-    tk.Button(
-        pstart,
-        text="Start",
-        font=("Tim New Roman",15),
-        width=15,
-        height=2,
-        fg="black",
-        bg="#fdebd3",
-        borderwidth=3,
-        highlightthickness=2,
-        command=lambda: send_start(client),
-    ).place(x=275, y=15)
-    return
-
-
-def kill(root, client):
-    global pid
-    kill = tk.Toplevel(root)
-    kill["bg"] = BACKGROUND
-    kill.geometry("420x70")
-    pid = tk.StringVar(kill)
-    tk.Entry(kill, textvariable=pid, width=38, borderwidth=5).place(x=10, y=20)
-    tk.Button(
-        kill,
-        text="Kill",
-        font=("Tim New Roman",15),
-        width=15,
-        height=2,
-        fg="black",
-        bg="#fdebd3",
-        borderwidth=3,
-        highlightthickness=2,
-        command=lambda: send_kill(client),
-    ).place(x=275, y=15)
-    return
-
-
 class AppProcess(Frame):
     def __init__(self, parent, client):
         Frame.__init__(self, parent)
@@ -137,6 +18,9 @@ class AppProcess(Frame):
         )
         parent.geometry("900x500+200+200")
         self.grid(row=0, column=0, sticky="nsew")
+        
+        self.client=client
+        self.status = True
 
         self.tab = ttk.Treeview(self, height=18, selectmode="browse")
         self.scroll = tk.Scrollbar(self, orient="vertical", command=self.tab.yview)
@@ -163,7 +47,7 @@ class AppProcess(Frame):
             fg="black",
             borderwidth=3,
             highlightthickness=2,
-            command=lambda: switch(self.button_process, self.tab),
+            command=lambda: self.switch(self.button_process, self.tab),
         )
         self.button_process.place(x=170, y=375, width=135, height=50)
 
@@ -177,7 +61,7 @@ class AppProcess(Frame):
             fg="black",
             borderwidth=3,
             highlightthickness=2,
-            command=lambda: _list(client, self.tab, self.button_process["text"]),
+            command=lambda: self.list(client, self.tab, self.button_process["text"]),
         )
         self.button_list.place(x=170, y=437, width=135, height=50)
 
@@ -191,7 +75,7 @@ class AppProcess(Frame):
             fg="black",
             borderwidth=3,
             highlightthickness=2,
-            command=lambda: start(parent, client),
+            command=lambda: self.start(parent, client),
         )
         self.button_start.place(x=382, y=375, width=135, height=50)
 
@@ -205,7 +89,7 @@ class AppProcess(Frame):
             font=("Tim New Roman",15),
             borderwidth=3,
             highlightthickness=2,
-            command=lambda: kill(parent, client),
+            command=lambda: self.kill(parent, client),
         )
         self.button_kill.place(x=382, y=437, width=135, height=50)
 
@@ -219,7 +103,7 @@ class AppProcess(Frame):
             font=("Tim New Roman",15),
             borderwidth=3,
             highlightthickness=2,
-            command=lambda: clear(self.tab),
+            command=lambda: self.clear(self.tab),
         )
         self.button_clear.place(x=594, y=375, width=135, height=50)
 
@@ -233,5 +117,127 @@ class AppProcess(Frame):
             font=("Tim New Roman",15),
             borderwidth=3,
             highlightthickness=2,
+            command=lambda: self.back(),
         )
         self.button_back.place(x=594, y=437, width=135, height=50)
+    def recvall(self,sock, size):
+        message = bytearray()
+        while len(message) < size:
+            buffer = sock.recv(size - len(message))
+            if not buffer:
+                raise EOFError("Could not receive all expected data!")
+            message.extend(buffer)
+        return bytes(message)
+
+    def receive(self,client):
+        packed = self.recvall(client, struct.calcsize("!I"))
+        size = struct.unpack("!I", packed)[0]
+        data = self.recvall(client, size)
+        return data
+
+
+    def switch(self,button, tab):
+        if button["text"] == "PROCESS":
+            button.configure(text="APPLICATION")
+            tab.heading("Name", text="Name Process")
+            tab.heading("ID", text="ID Process")
+            tab.heading("Count", text="Count Threads")
+        else:
+            button.configure(text="PROCESS")
+            tab.heading("Name", text="Name Application")
+            tab.heading("ID", text="ID Application")
+            tab.heading("Count", text="Count Threads")
+        return
+
+
+    def send_kill(self,client):
+        global pid
+        client.sendall(bytes("0", "utf8"))
+        client.sendall(bytes(str(pid.get()), "utf8"))
+        message = client.recv(BUFFERSIZE).decode("utf8")
+        if "1" in message:
+            tk.messagebox.showinfo(message="Đã diệt!")
+        else:
+            tk.messagebox.showerror(message="Lỗi!")
+        return
+
+
+    def list(self,client, tab, s):
+        client.sendall(bytes("1", "utf8"))
+        client.sendall(bytes(s, "utf8"))
+        list1 = self.receive(client)
+        list1 = pickle.loads(list1)
+        list2 = self.receive(client)
+        list2 = pickle.loads(list2)
+        list3 = self.receive(client)
+        list3 = pickle.loads(list3)
+        for i in tab.get_children():
+            tab.delete(i)
+        for i in range(len(list1)):
+            tab.insert(
+                parent="", index="end", text="", values=(list1[i], list2[i], list3[i])
+            )
+        return
+
+
+    def clear(self,tab):
+        for i in tab.get_children():
+            tab.delete(i)
+        return
+
+
+    def send_start(self,client):
+        global pname
+        client.sendall(bytes("3", "utf8"))
+        client.sendall(bytes(str(pname.get()), "utf8"))
+        return
+
+
+    def start(self, root, client):
+        global pname
+        pstart = tk.Toplevel(root)
+        pstart["bg"] = BACKGROUND
+        pstart.geometry("420x70")
+        pname = tk.StringVar(pstart)
+        tk.Entry(pstart, textvariable=pname, width=38, borderwidth=5).place(x=10, y=20)
+        tk.Button(
+            pstart,
+            text="Start",
+            font=("Tim New Roman",15),
+            width=15,
+            height=2,
+            fg="black",
+            bg="#fdebd3",
+            borderwidth=3,
+            highlightthickness=2,
+            command=lambda: self.send_start(client),
+        ).place(x=275, y=15)
+        return
+
+
+    def kill(self, root, client):
+        global pid
+        kill = tk.Toplevel(root)
+        kill["bg"] = BACKGROUND
+        kill.geometry("420x70")
+        pid = tk.StringVar(kill)
+        tk.Entry(kill, textvariable=pid, width=38, borderwidth=5).place(x=10, y=20)
+        tk.Button(
+            kill,
+            text="Kill",
+            font=("Tim New Roman",15),
+            width=15,
+            height=2,
+            fg="black",
+            bg="#fdebd3",
+            borderwidth=3,
+            highlightthickness=2,
+            command=lambda: self.send_kill(client),
+        ).place(x=275, y=15)
+        return
+    def back(self):
+        self.status=False
+        self.destroy()
+        self.client.sendall("STOP".encode())
+
+    

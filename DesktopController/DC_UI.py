@@ -26,11 +26,6 @@ login_ui = Login(window)
 def back(temp):
     temp.destroy()
     menu_ui.tkraise()
-    
-def back_2(temp):
-    temp.destroy()
-    menu_ui.tkraise()
-    main_connect.sendall("STOP".encode(FORMAT))
 
 def live_screen():
     main_connect.sendall("LIVESCREEN".encode(FORMAT))
@@ -55,7 +50,8 @@ def disconnect():
 def key_logger():
     main_connect.sendall("KEYLOG".encode(FORMAT))
     temp = Keylogger(window, main_connect)
-    temp.button_back.configure(command=lambda: back_2(temp))
+    if temp.status == False:
+        back(temp)
     return
 
 def control_desktop():
@@ -77,13 +73,15 @@ def control_desktop():
 def directory_tree():
     main_connect.sendall(bytes("DIRECTORY", "utf8"))
     temp = DirectoryTree(window, main_connect)
-    temp.button_back.configure(command=lambda: back_2(temp))
+    if temp.status == False:
+        back(temp)
     return
 
 def app_process():
     main_connect.sendall("PROCESS".encode(FORMAT))
     temp = AppProcess(window, main_connect)
-    temp.button_back.configure(command=lambda: back_2(temp))
+    if temp.status == False:
+        back(temp)
     return
 
 def shutdown_logout():

