@@ -91,11 +91,13 @@ def MouseControlled(mouse_con):
         #Nếu lệnh là nhấp trái
         if command == "clickLeft":
             button = 'left'
+            x, y = int(x), int(y)
             print("ClickLeft ",x,y)
             pag.click(x, y,button)
         #Nếu lệnh là nhấp phải
         if command == "clickRight":
             button = 'right'
+            x, y = int(x), int(y)
             print("ClickRight ",x,y)
             pag.click(x, y, button)
         #Nếu lệnh là di chuyển
@@ -107,6 +109,7 @@ def MouseControlled(mouse_con):
                 print("Invalid move command:", buffer)
         #Nếu lệnh là cuộn
         if command == "scroll":
+            x, y = int(x), int(y)
             print("Scroll ",x,y)
             pag.scroll(x)
         mouse_con.sendall(buffer.encode())
