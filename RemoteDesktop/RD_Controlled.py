@@ -100,8 +100,11 @@ def MouseControlled(mouse_con):
             pag.click(x, y, button)
         #Nếu lệnh là di chuyển
         if command == "move":
-            print(x,y)
-            pag.moveTo(x,y)
+            try:
+                x, y = int(x), int(y)
+                pag.moveTo(x, y)
+            except ValueError:
+                print("Invalid move command:", buffer)
         #Nếu lệnh là cuộn
         if command == "scroll":
             print("Scroll ",x,y)
