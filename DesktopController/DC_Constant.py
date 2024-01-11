@@ -6,3 +6,9 @@ DELAY = 1
 BACKGROUND = "pink"
 WIDTH = 900
 HEIGHT = 500
+
+
+# class myButton(Button):
+#     def __init__(self):
+        
+    

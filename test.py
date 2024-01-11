@@ -66,9 +66,16 @@ def scroll(self, event):
     print(buffer)
     buffer =""
 
-window = tk.Tk()
-window.bind("<MouseWheel>", scroll)
-window.mainloop
+# window = tk.Tk()
+# window.bind("<MouseWheel>", scroll)
+# window.mainloop
+
+import psutil
+
+# Lấy tỷ lệ sử dụng CPU trong 1 giây gần đây
+cpu_percent = psutil.cpu_percent(interval=1)
+
+print(f'Tỷ lệ sử dụng CPU: {cpu_percent}%')
 
 
 # s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
