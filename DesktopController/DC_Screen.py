@@ -101,8 +101,8 @@ class Screen(Frame):
     def save_img(self):
         if self.frame == None:
             return
-        types = [("Portable Network Graphics", "*.png"), ("All Files", "*.*")]
-        image_file = asksaveasfile(mode="wb", filetypes=types, defaultextension="*.png")
+        types = [("Portable Network Graphics", "*.jpeg"), ("All Files", "*.*")]
+        image_file = asksaveasfile(mode="wb", filetypes=types, defaultextension="*.jpeg")
         if image_file == None:
             return
         image_file.write(self.frame)

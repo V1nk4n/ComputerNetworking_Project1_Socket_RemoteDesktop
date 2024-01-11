@@ -8,7 +8,8 @@ WIDTH = 900
 HEIGHT = 500
 
 
-# class myButton(Button):
-#     def __init__(self):
+class myButton(Button):
+    def __init__(self):
+        Button.__init__()
         
     
