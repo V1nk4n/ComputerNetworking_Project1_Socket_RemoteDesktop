@@ -19,6 +19,6 @@ def send_img(screenConnection):
             #Gửi hình ảnh
             screenConnection.sendall(image_byte_array)
             
-            status = screenConnection.recv(BUFFERSIZE).decode(FORMAT)
-            if "STOP" in status:
+            msg = screenConnection.recv(BUFFERSIZE).decode(FORMAT)
+            if "STOP" in msg:
                 break

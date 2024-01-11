@@ -4,8 +4,8 @@ from tkinter import Button, Text
 from DC_Constant import BACKGROUND, BUFFERSIZE, WIDTH, HEIGHT, FORMAT
 
 class Keylogger(Frame):
-    def __init__(self, parent, client):
-        Frame.__init__(self, parent)
+    def __init__(self, window, client):
+        Frame.__init__(self, window)
         self.configure(
             bg=BACKGROUND,
             height=HEIGHT,
@@ -14,7 +14,7 @@ class Keylogger(Frame):
             highlightthickness=0,
             relief="ridge",
         )
-        parent.geometry("900x500+200+200")
+        window.geometry("900x500+200+200")
         self.grid(row=0, column=0, sticky="nsew")
 
         self.client=client

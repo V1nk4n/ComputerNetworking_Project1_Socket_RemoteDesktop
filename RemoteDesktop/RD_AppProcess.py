@@ -18,61 +18,93 @@ def list_apps():
     list1 = list()
     list2 = list()
     list3 = list()
-
-    cmd = "powershell \"gps | where {$_.mainWindowTitle} | select Description, ID, @{Name='CPU_Percent'; Expression={(Get-Counter '\Processor(_Total)\% Processor Time').CounterSamples[0].CookedValue}}\""
+    list4 = list()
+    #cmd = "powershell \"gps | where {$_.mainWindowTitle} | select Description, ID, @{Name='CPU_Percent'; Expression={(Get-Counter '\Processor(_Total)\% Processor Time').CounterSamples[0].CookedValue}}\""
+    #cmd = r"powershell \"gps | where {$_.mainWindowTitle} | select Description, ID, @{Name='CPU_Percent'; Expression={(Get-Counter '\Processor(_Total)\% Processor Time').CounterSamples[0].CookedValue}}, @{Name='Memory'; Expression={(Get-Process -Id $_.Id).WorkingSet64}}\""
+    cmd = "PowerShell -Command \"Get-Process | Select ProcessName, ID, VM, CPU\""
     proc = os.popen(cmd).read().split("\n")
     temp = list()
-    for line in proc:
-        if not line.isspace():
-            temp.append(line)
-    temp = temp[3:]
-    for line in temp:
-        try:
-            arr = line.split(" ")
-            if len(arr) < 3:
-                continue
-            if arr[0] == "" or arr[0] == " ":
-                continue
+    
+    proc.pop(0)
+    proc.pop(0)
+    proc.pop(0)
+    # for line in proc:
+    #     if not line.isspace():
+    #         temp.append(line)
+    # temp = temp[4:]
+    # for line in temp:
+    #     try:
+    #         arr = line.split(" ")
+    #         if len(arr) < 4:
+    #             continue
+    #         if arr[0] == "" or arr[0] == " ":
+    #             continue
 
-            name = arr[0]
-            threads = arr[-1]
-            ID = 0
-            # interation
-            cur = len(arr) - 2
-            for i in range(cur, -1, -1):
-                if len(arr[i]) != 0:
-                    ID = arr[i]
-                    cur = i
-                    break
-            for i in range(1, cur, 1):
-                if len(arr[i]) != 0:
-                    name += " " + arr[i]
-            list1.append(name)
-            list2.append(ID)
-            list3.append(threads)
-        except:
-            pass
-    return list1, list2, list3
+    #         name = arr[0]
+    #         cpu = arr[-1]
+    #         mem = arr[-1]
+    #         ID = 0
+    #         # interation
+    #         cur = len(arr) - 2
+    #         for i in range(cur, -1, -1):
+    #             if len(arr[i]) != 0:
+    #                 ID = arr[i]
+    #                 cur = i
+    #                 break
+    #         for i in range(1, cur, 1):
+    #             if len(arr[i]) != 0:
+    #                 name += " " + arr[i]
+    #         list1.append(name)
+    #         list2.append(ID)
+    #         list3.append(cpu)
+    #         list4.append(mem)
+    #     except:
+    #         pass
+
+    for i in proc:
+        if i == ' ' or i == '':
+            continue
+        print(i)
+        i = i + '0'
+        list1.append(i[:i.find(' ')])
+        
+        i = i[i.find(' ') :].strip()
+        
+        list2.append(i[:i.find(' ')])
+        
+        i = i[i.find(' '):].strip()
+        list4.append(i[:i.find(' ')])
+        
+        list3(i[i.find(' '):].strip(' '))
+        
+
+    return list1, list2, list3, list4
+
+#for i in res:
+ #   print('Process name: {} PID: {} VM: {} CPU: {}'.format(i[0], i[1], i[2], i[3]))
 
 
 def list_processes():
     list1 = list()
     list2 = list()
     list3 = list()
+    list4 = list()
     for proc in psutil.process_iter():
         try:
             name = proc.name()
             pid = proc.pid
-            cpu = proc.cpu_percent(interval=None)
+            cpu = (proc.cpu_percent(interval=None))*100
+            mem = (proc.memory_percent(interval=None))*100
             list1.append(str(name))
             list2.append(str(pid))
             list3.append(str(cpu))
+            list4.append(str(mem))
         except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
             pass
-    return list1, list2, list3
+    return list1, list2, list3, list4
 
 
-def kill(pid):
+def end(pid):
     cmd = "taskkill.exe /F /PID " + str(pid)
     try:
         a = os.system(cmd)
@@ -99,22 +131,23 @@ def app_process(client):
         list1 = list()
         list2 = list()
         list3 = list()
+        list4 = list()
         option = int(msg)
         
         if option == 0:
             pid = client.recv(BUFFERSIZE).decode("utf8")
             pid = int(pid)
             try:
-                result = kill(pid)
+                result = end(pid)
             except:
                 result = 0
         elif option == 1:
             try:
                 status = client.recv(BUFFERSIZE).decode("utf8")
                 if "PROCESS" in status:
-                    list1, list2, list3 = list_apps()
+                    list1, list2, list3, list4 = list_apps()
                 else:
-                    list1, list2, list3 = list_processes()
+                    list1, list2, list3, list4 = list_processes()
                 result = 1
             except:
                 result = 0
@@ -133,8 +166,10 @@ def app_process(client):
             list1 = pickle.dumps(list1)
             list2 = pickle.dumps(list2)
             list3 = pickle.dumps(list3)
+            list4 = pickle.dumps(list4)
 
             send_data(client, list1)
             send_data(client, list2)
             send_data(client, list3)
+            send_data(client, list4)
     return

@@ -1,12 +1,12 @@
 import os
 from RD_Constant import BUFFERSIZE, FORMAT
 
-def shutout(com_con):
+def shutout(main_connect):
     while(True):
-        message = com_con.recv(BUFFERSIZE).decode(FORMAT)
-        if "SHUTDOWN" in message:
+        msg = main_connect.recv(BUFFERSIZE).decode(FORMAT)
+        if "SHUTDOWN" in msg:
             os.system('shutdown -s -t 15')
-        elif "LOGOUT" in message:
+        elif "LOGOUT" in msg:
             os.system('shutdown -l')
         else:
             return

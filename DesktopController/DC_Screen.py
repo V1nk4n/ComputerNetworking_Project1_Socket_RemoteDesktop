@@ -53,10 +53,10 @@ class Screen(Frame):
         )
         self.button_back.place(x=534, y=HEIGHT-40, width=200, height=30)
 
-        self.start = Thread(target=self.ChangeImage, daemon=True)
+        self.start = Thread(target=self.recv_img, daemon=True)
         self.start.start()
 
-    def ChangeImage(self):
+    def recv_img(self):
         while self.status:
             #Nhận chiều dài của hình ảnh ở kiểu byte
             length_bytes = self.screenConnection.recv(4)

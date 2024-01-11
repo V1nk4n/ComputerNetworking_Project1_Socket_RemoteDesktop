@@ -62,7 +62,6 @@ def get_wifi_ip_address():
 try:
     global s
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    host ='localhost'
     IP = get_wifi_ip_address()
     print(IP)
     s.bind((IP, SERVER_PORT))

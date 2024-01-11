@@ -6,16 +6,16 @@ from tkinter import Text, Button,filedialog, messagebox, Frame
 from tkinter import*
 from DC_Constant import BACKGROUND, BUFFERSIZE, WIDTH, HEIGHT, FORMAT
 
-def listDirs(dire_con, path):
-    dire_con.sendall(path.encode())
-    data_size = int(dire_con.recv(BUFFERSIZE))
+def list_dir(main_connect, path):
+    main_connect.sendall(path.encode())
+    data_size = int(main_connect.recv(BUFFERSIZE))
     if (data_size == -1):
         messagebox.showerror(message = "Click SHOW button again to watch the new directory tree!")
         return []
-    dire_con.sendall("received filesize".encode())
+    main_connect.sendall("received filesize".encode())
     data = b""
     while len(data) < data_size:
-        packet = dire_con.recv(BUFFERSIZE)
+        packet = main_connect.recv(BUFFERSIZE)
         data += packet
     if (data == "error"):
         messagebox.showerror(message = "Cannot open this directory!")
@@ -25,8 +25,8 @@ def listDirs(dire_con, path):
     return loaded_list
 
 class DirectoryTree(Frame):
-    def __init__(self, parent, dire_con):
-        Frame.__init__(self, parent)
+    def __init__(self, window, main_connect):
+        Frame.__init__(self, window)
 
         self.configure(
             bg=BACKGROUND,
@@ -36,11 +36,11 @@ class DirectoryTree(Frame):
             highlightthickness=0,
             relief="ridge",
         )
-        parent.geometry("900x500+200+200")
+        window.geometry("900x500+200+200")
         self.grid(row=0, column=0, sticky="nsew")
         self.status = True
 
-        self.client =  dire_con
+        self.client =  main_connect
         self.currPath = " "
         self.nodes = dict()
        
@@ -53,7 +53,7 @@ class DirectoryTree(Frame):
             width=700,
             height=400,
         )
-        self.insText1 = "Selected path."
+        self.insText1 = "PATH"
         self.label1 = tk.Label(self.frame, text=self.insText1)
         self.label1.pack(fill = tk.X)
         self.path = Text(self.frame, height = 1, width = 26, state = "disable")
@@ -67,14 +67,14 @@ class DirectoryTree(Frame):
         self.tree.bind('<<TreeviewOpen>>', self.open_node)
         self.tree.bind("<<TreeviewSelect>>", self.select_node)
 
-        self.insText2 = "Ấn nút SHOW để xem the server's directory tree."
+        self.insText2 = "Ấn nút SHOW để xem cây thư mục"
         self.label2 = tk.Label(self.frame, text=self.insText2)
         self.label2.pack(fill = tk.X)
 
         self.button_show_tree = Button(self, text = 'SHOW', width = 20, height = 5,
             borderwidth=0,
             highlightthickness=0,
-            command=self.showTree,
+            command=self.show_tree,
             fg = "black",
             bg = "#fdebd3", 
             font=("Tim New Roman",15),
@@ -85,7 +85,7 @@ class DirectoryTree(Frame):
         self.button_send_file = Button(self, text = 'SEND FILE', width = 20, height = 5,
             borderwidth=0,
             highlightthickness=0,
-            command=self.copyFileToServer,
+            command=self.send_file,
             fg = "black", 
             bg = "#fdebd3", 
             font=("Tim New Roman",15),
@@ -96,7 +96,7 @@ class DirectoryTree(Frame):
         self.button_copy_file = Button(self, text = 'COPY FILE', width = 20, height = 5, 
             borderwidth=0,
             highlightthickness=0,
-            command=self.copyFileToClient,
+            command=self.copy_file,
             fg = "black", 
             bg = "#fdebd3", 
             font=("Tim New Roman",15),
@@ -106,7 +106,7 @@ class DirectoryTree(Frame):
         self.button_delete = Button(self, text = 'DELETE', width = 20, height = 5, 
             borderwidth=0,
             highlightthickness=0,
-            command=self.deleteFile,
+            command=self.delete_file,
             fg = "black", 
             bg = "#fdebd3", 
             font=("Tim New Roman",15),
@@ -136,7 +136,7 @@ class DirectoryTree(Frame):
         if abspath:
             self.tree.delete(self.tree.get_children(node))
             try:
-                dirs = listDirs(self.client, abspath)
+                dirs = list_dir(self.client, abspath)
                 for p in dirs:
                     self.insert_node(node, p[0], os.path.join(abspath, p[0]), p[1])
             except:
@@ -156,7 +156,7 @@ class DirectoryTree(Frame):
         self.path.insert(tk.END, self.currPath)
         self.path.config(state = "disable")
 
-    def deleteTree(self):
+    def delete_tree(self):
         self.currPath = " "
         self.path.config(state = "normal")
         self.path.delete("1.0", tk.END)
@@ -164,8 +164,8 @@ class DirectoryTree(Frame):
         for i in self.tree.get_children():
             self.tree.delete(i)
 
-    def showTree(self):
-        self.deleteTree()
+    def show_tree(self):
+        self.delete_tree()
         self.client.sendall("SHOW".encode())
 
         data_size = int(self.client.recv(BUFFERSIZE))
@@ -184,7 +184,7 @@ class DirectoryTree(Frame):
                 continue
 
     # copy file from client to server
-    def copyFileToServer(self):
+    def send_file(self):
         self.client.sendall("COPYTO".encode())
         isOk = self.client.recv(BUFFERSIZE).decode()
         if (isOk == "OK"):
@@ -212,7 +212,7 @@ class DirectoryTree(Frame):
         return False
 
     # copy file from server to client
-    def copyFileToClient(self):
+    def copy_file(self):
         self.client.sendall("COPY".encode())
         isOk = self.client.recv(BUFFERSIZE).decode()
         if (isOk == "OK"):
@@ -241,7 +241,7 @@ class DirectoryTree(Frame):
         else:
             messagebox.showerror(message = "Cannot copy!") 
 
-    def deleteFile(self):
+    def delete_file(self):
         self.client.sendall("DEL".encode())
         isOk = self.client.recv(BUFFERSIZE).decode()
         if (isOk == "OK"):

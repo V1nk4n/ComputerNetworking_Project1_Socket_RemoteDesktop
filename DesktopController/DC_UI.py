@@ -86,7 +86,7 @@ def app_process():
 
 def shutdown_logout():
     main_connect.sendall("SHUTOUT".encode(FORMAT))
-    temp = sot.shutdown_logout(window, main_connect)
+    temp = sot.shutout(window, main_connect)
     return
 
 def show_menu_ui():

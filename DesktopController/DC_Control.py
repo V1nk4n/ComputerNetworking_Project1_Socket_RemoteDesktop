@@ -174,7 +174,6 @@ class Control(Frame):
             x = int(event.x*1920/(WIDTH-60))
             y = int(event.y*1080/(HEIGHT-60))
             buffer = f"move,{x},{y}"
-            print(buffer)
             self.mouseConnection.sendall(buffer.encode())
             buffer = self.mouseConnection.recv(BUFFERSIZE).decode()
             buffer =""

@@ -26,15 +26,17 @@ class AppProcess(Frame):
         self.scroll = tk.Scrollbar(self, orient="vertical", command=self.tab.yview)
         self.scroll.place(x=803, y=12, height=350)
         self.tab.configure(yscrollcommand=self.scroll.set)
-        self.tab["columns"] = ("Name", "ID", "Count")
+        self.tab["columns"] = ("Name", "ID", "CPU Percent", "Memory")
         self.tab.column("#0", width=0)
-        self.tab.column("Name", anchor="center", width=150, minwidth=10, stretch=True)
-        self.tab.column("ID", anchor="center", width=150, minwidth=10, stretch=True)
-        self.tab.column("Count", anchor="center", width=150, minwidth=10, stretch=True)
+        self.tab.column("Name", anchor="center", width=120, minwidth=10, stretch=True)
+        self.tab.column("ID", anchor="center", width=120, minwidth=10, stretch=True)
+        self.tab.column("CPU Percent", anchor="center", width=120, minwidth=10, stretch=True)
+        self.tab.column("Memory", anchor="center", width=120, minwidth=10, stretch=True)
         self.tab.heading("#0", text="")
         self.tab.heading("Name", text="Name Application")
         self.tab.heading("ID", text="ID Application")
-        self.tab.heading("Count", text="CPU Percent")
+        self.tab.heading("CPU Percent", text="CPU Percent")
+        self.tab.heading("Memory", text="Memory")
         self.tab.place(x=93, y=12, width=713, height=350)
 
         self.button_process = Button(
@@ -89,7 +91,7 @@ class AppProcess(Frame):
             font=("Tim New Roman",15),
             borderwidth=3,
             highlightthickness=2,
-            command=lambda: self.kill(parent, client),
+            command=lambda: self.end(parent, client),
         )
         self.button_kill.place(x=382, y=437, width=135, height=50)
 
@@ -141,24 +143,27 @@ class AppProcess(Frame):
             button.configure(text="APPLICATION")
             tab.heading("Name", text="Name Process")
             tab.heading("ID", text="ID Process")
-            tab.heading("Count", text="Count Threads")
+            tab.heading("CPU Percent", text="CPU Percent")
+            tab.heading("Memory", text="Memory")
+            
         else:
             button.configure(text="PROCESS")
             tab.heading("Name", text="Name Application")
             tab.heading("ID", text="ID Application")
-            tab.heading("Count", text="Count Threads")
+            tab.heading("CPU Percent", text="CPU Percent")
+            tab.heading("Memory", text="Memory")
         return
 
 
-    def send_kill(self,client):
+    def send_end(self,client):
         global pid
         client.sendall(bytes("0", "utf8"))
         client.sendall(bytes(str(pid.get()), "utf8"))
         message = client.recv(BUFFERSIZE).decode("utf8")
         if "1" in message:
-            tk.messagebox.showinfo(message="Đã diệt!")
+            tk.messagebox.showinfo(message="End task!")
         else:
-            tk.messagebox.showerror(message="Lỗi!")
+            tk.messagebox.showerror(message="Error!")
         return
 
 
@@ -171,11 +176,13 @@ class AppProcess(Frame):
         list2 = pickle.loads(list2)
         list3 = self.receive(client)
         list3 = pickle.loads(list3)
+        list4 = self.receive(client)
+        list4 = pickle.loads(list4)
         for i in tab.get_children():
             tab.delete(i)
         for i in range(len(list1)):
             tab.insert(
-                parent="", index="end", text="", values=(list1[i], list2[i], list3[i])
+                parent="", index="end", text="", values=(list1[i], list2[i], list3[i], list4[i])
             )
         return
 
@@ -215,7 +222,7 @@ class AppProcess(Frame):
         return
 
 
-    def kill(self, root, client):
+    def end(self, root, client):
         global pid
         kill = tk.Toplevel(root)
         kill["bg"] = BACKGROUND
@@ -224,7 +231,7 @@ class AppProcess(Frame):
         tk.Entry(kill, textvariable=pid, width=38, borderwidth=5).place(x=10, y=20)
         tk.Button(
             kill,
-            text="Kill",
+            text="End",
             font=("Tim New Roman",15),
             width=15,
             height=2,
@@ -232,7 +239,7 @@ class AppProcess(Frame):
             bg="#fdebd3",
             borderwidth=3,
             highlightthickness=2,
-            command=lambda: self.send_kill(client),
+            command=lambda: self.send_end(client),
         ).place(x=275, y=15)
         return
     def back(self):

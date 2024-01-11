@@ -2,9 +2,6 @@ from tkinter import *
 from PIL import Image, ImageTk
 from DC_Constant import BACKGROUND,WIDTH, HEIGHT
 
-
-
-
 class Login(Frame):
     def __init__(self, parent):
         Frame.__init__(self, parent)
@@ -51,24 +48,4 @@ class Login(Frame):
 
         self.connect.place(x=300,y=316,height=50,width=300,)
 
-# self.password_label = Label(
-        #     self,
-        #     text="Password",
-        #     font="Calibri 15 bold",
-        #     bg=BACKGROUND,
-        #     fg="#264e70",
-        # ).place(x=60, y=200)
-        # self.password_input = Entry(
-        #     self,
-        #     bg="white",
-        #     highlightthickness=1,
-        #     fg="black",
-        #     relief="flat",
-        #     font="Calibri 15",
-        # ).place(
-        #     x=60,
-        #     y=230,
-        #     width=300,
-        #     height=50,
-        # )
 
