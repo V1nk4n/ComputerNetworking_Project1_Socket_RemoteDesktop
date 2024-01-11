@@ -63,7 +63,7 @@ def list_processes():
         try:
             name = proc.name()
             pid = proc.pid
-            cpu = proc.cpu_percent()
+            cpu = proc.cpu_percent(interval=None)
             list1.append(str(name))
             list2.append(str(pid))
             list3.append(str(cpu))
