@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import *
 from tkinter import Button, Text
-from DC_Constant import BACKGROUND, BUFFERSIZE, WIDTH, HEIGHT, FORMAT
+from DC_Constant import BACKGROUND, BUFFERSIZE, WIDTH, HEIGHT, FORMAT, myButton
 
 class Keylogger(Frame):
     def __init__(self, window, client):

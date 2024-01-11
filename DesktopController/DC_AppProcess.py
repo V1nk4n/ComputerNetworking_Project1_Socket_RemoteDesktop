@@ -3,7 +3,7 @@ import struct
 import tkinter as tk
 from tkinter import *
 from tkinter import ttk
-from DC_Constant import BACKGROUND, BUFFERSIZE, WIDTH, HEIGHT
+from DC_Constant import BACKGROUND, BUFFERSIZE, WIDTH, HEIGHT, myButton
 
 class AppProcess(Frame):
     def __init__(self, parent, client):
@@ -52,6 +52,7 @@ class AppProcess(Frame):
             command=lambda: self.switch(self.button_process, self.tab),
         )
         self.button_process.place(x=170, y=375, width=135, height=50)
+
 
         self.button_show = Button(
             self,
@@ -204,15 +205,15 @@ class AppProcess(Frame):
         global pname
         pstart = tk.Toplevel(root)
         pstart["bg"] = BACKGROUND
-        pstart.geometry("420x70+200+500")
+        pstart.geometry("420x70+450+300")
         pname = tk.StringVar(pstart)
         tk.Entry(pstart, textvariable=pname, width=38, borderwidth=5).place(x=10, y=20)
         tk.Button(
             pstart,
             text="Start",
-            font=("Tim New Roman",15),
-            width=15,
-            height=2,
+            font=("Times New Roman",15),
+            width=10,
+            height=1,
             fg="black",
             bg="#fdebd3",
             borderwidth=3,
@@ -226,15 +227,15 @@ class AppProcess(Frame):
         global pid
         kill = tk.Toplevel(root)
         kill["bg"] = BACKGROUND
-        kill.geometry("420x70")
+        kill.geometry("420x70+450+300")
         pid = tk.StringVar(kill)
         tk.Entry(kill, textvariable=pid, width=38, borderwidth=5).place(x=10, y=20)
         tk.Button(
             kill,
             text="End",
-            font=("Tim New Roman",15),
-            width=15,
-            height=2,
+            font=("Times New Roman",15),
+            width=10,
+            height=1,
             fg="black",
             bg="#fdebd3",
             borderwidth=3,

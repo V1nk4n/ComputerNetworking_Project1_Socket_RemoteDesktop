@@ -1,6 +1,6 @@
 import tkinter as tk
 from DC_Constant import BACKGROUND
-from DC_Constant import FORMAT
+from DC_Constant import FORMAT, myButton
 
 def click_close(window, main_connect):
     main_connect.sendall("QUIT".encode(FORMAT))
@@ -14,7 +14,7 @@ def logout(com_con):
 
 def shutout(parent, com_con):
     window = tk.Toplevel(parent)
-    window.geometry("200x160")
+    window.geometry("200x160+450+300")
     window.grab_set()
     window.protocol("WM_DELETE_WINDOW", lambda: click_close(window, com_con))
     shutdown_option = tk.Button(

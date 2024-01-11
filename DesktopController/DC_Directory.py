@@ -4,7 +4,7 @@ import tkinter.ttk as ttk
 import pickle
 from tkinter import Text, Button,filedialog, messagebox, Frame
 from tkinter import*
-from DC_Constant import BACKGROUND, BUFFERSIZE, WIDTH, HEIGHT, FORMAT
+from DC_Constant import BACKGROUND, BUFFERSIZE, WIDTH, HEIGHT, FORMAT, myButton
 
 def list_dir(main_connect, path):
     main_connect.sendall(path.encode())
@@ -47,8 +47,8 @@ class DirectoryTree(Frame):
         self.frame = tk.Frame(self, height = 400, width = 500)
         self.tree = ttk.Treeview(self.frame)
         self.frame.place(
-            x=16,
-            y=85,
+            x=100,
+            y=23,
             width=700,
             height=300,
         )
@@ -66,9 +66,9 @@ class DirectoryTree(Frame):
         self.tree.bind('<<TreeviewOpen>>', self.open_node)
         self.tree.bind("<<TreeviewSelect>>", self.select_node)
 
-        # self.insText2 = "Ấn nút SHOW để xem cây thư mục"
-        # self.label2 = tk.Label(self.frame, text=self.insText2)
-        # self.label2.pack(fill = tk.X)
+        self.insText2 = "Ấn nút SHOW để xem cây thư mục"
+        self.label2 = tk.Label(self.frame, text=self.insText2)
+        self.label2.pack(fill = tk.X)
 
         self.button_show_tree = Button(self, text = 'SHOW', width = 20, height = 5,
             borderwidth=0,
@@ -79,9 +79,9 @@ class DirectoryTree(Frame):
             font=("Tim New Roman",15),
             relief="flat"
         )
-        self.button_show_tree.place(x=149,y=16,width=150,height=53)
+        self.button_show_tree.place(x=112,y=349,width=150,height=53)
         # chi gui vao folder th
-        self.button_send_file = Button(self, text = 'SEND FILE', width = 20, height = 5,
+        self.button_send_file = Button(self, text = 'SEND', width = 20, height = 5,
             borderwidth=0,
             highlightthickness=0,
             command=self.send_file,
@@ -90,9 +90,9 @@ class DirectoryTree(Frame):
             font=("Tim New Roman",15),
             relief="flat"
         )
-        self.button_send_file.place(x=733,y=145,width=150,height=53)
+        self.button_send_file.place(x=374,y=349,width=150,height=53)
         # chi copy file
-        self.button_copy_file = Button(self, text = 'COPY FILE', width = 20, height = 5, 
+        self.button_copy_file = Button(self, text = 'COPY', width = 20, height = 5, 
             borderwidth=0,
             highlightthickness=0,
             command=self.copy_file,
@@ -101,7 +101,7 @@ class DirectoryTree(Frame):
             font=("Tim New Roman",15),
             relief="flat"
         )
-        self.button_copy_file.place(x=733,y=258,width=150,height=53)
+        self.button_copy_file.place(x=374,y=426,width=150,height=53)
         self.button_delete = Button(self, text = 'DELETE', width = 20, height = 5, 
             borderwidth=0,
             highlightthickness=0,
@@ -111,7 +111,7 @@ class DirectoryTree(Frame):
             font=("Tim New Roman",15),
             relief="flat"
         )
-        self.button_delete.place(x=733,y=371,width=150,height=53)
+        self.button_delete.place(x=112,y=426,width=150,height=53)
         self.button_back = Button(self, text = 'BACK', width = 20, height = 5,
             borderwidth=0,
             highlightthickness=0,
@@ -121,7 +121,7 @@ class DirectoryTree(Frame):
             font=("Tim New Roman",15),
             relief="flat"
         )
-        self.button_back.place(x=433,y=16,width=150,height=53)
+        self.button_back.place(x=636,y=385,width=150,height=53)
 
     def insert_node(self, parent, text, abspath, isFolder):
         node = self.tree.insert(parent, 'end', text=text, open=False)

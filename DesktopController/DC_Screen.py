@@ -3,7 +3,7 @@ import tkinter as tk
 from threading import Thread
 from tkinter import Frame
 from tkinter.filedialog import asksaveasfile
-from DC_Constant import BACKGROUND, BUFFERSIZE, WIDTH, HEIGHT, FORMAT
+from DC_Constant import BACKGROUND, BUFFERSIZE, WIDTH, HEIGHT, FORMAT, myButton
 from PIL import Image, ImageTk
 
 class Screen(Frame):

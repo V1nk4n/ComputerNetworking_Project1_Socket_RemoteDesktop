@@ -5,7 +5,7 @@ from threading import Thread, Event
 from tkinter import Frame
 from tkinter.filedialog import asksaveasfile
 
-from DC_Constant import BACKGROUND, BUFFERSIZE, WIDTH, HEIGHT, FORMAT
+from DC_Constant import BACKGROUND, BUFFERSIZE, WIDTH, HEIGHT, FORMAT, myButton
 from PIL import Image, ImageTk
 
 

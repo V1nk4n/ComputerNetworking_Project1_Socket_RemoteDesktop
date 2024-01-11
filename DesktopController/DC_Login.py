@@ -1,6 +1,6 @@
 from tkinter import *
 from PIL import Image, ImageTk
-from DC_Constant import BACKGROUND,WIDTH, HEIGHT
+from DC_Constant import BACKGROUND,WIDTH, HEIGHT, myButton
 
 class Login(Frame):
     def __init__(self, parent):
