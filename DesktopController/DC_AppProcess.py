@@ -34,7 +34,7 @@ class AppProcess(Frame):
         self.tab.heading("#0", text="")
         self.tab.heading("Name", text="Name Application")
         self.tab.heading("ID", text="ID Application")
-        self.tab.heading("Count", text="Count Threads")
+        self.tab.heading("Count", text="CPU Percent")
         self.tab.place(x=93, y=12, width=713, height=350)
 
         self.button_process = Button(

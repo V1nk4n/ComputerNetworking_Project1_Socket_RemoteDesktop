@@ -63,10 +63,10 @@ def list_processes():
         try:
             name = proc.name()
             pid = proc.pid
-            threads = proc.num_threads()
+            cpu = proc.cpu_percent()
             list1.append(str(name))
             list2.append(str(pid))
-            list3.append(str(threads))
+            list3.append(str(cpu))
         except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
             pass
     return list1, list2, list3
