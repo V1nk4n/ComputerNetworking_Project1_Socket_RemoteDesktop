@@ -19,7 +19,7 @@ def list_apps():
     list2 = list()
     list3 = list()
 
-    cmd = r'powershell "gps | where {$_.mainWindowTitle} | select Description, ID, @{Name=\'CPU_Percent\'; Expression={(Get-Counter \'\\Processor(_Total)\\% Processor Time\').CounterSamples[0].CookedValue}}"'
+    cmd = r'powershell "gps | where {$_.mainWindowTitle} | select Description, ID, @{Name=\'CPU_Percent\'; Expression={(Get-Process -Id $_.Id).CPU}}"'
     proc = os.popen(cmd).read().split("\n")
     temp = list()
     for line in proc:
