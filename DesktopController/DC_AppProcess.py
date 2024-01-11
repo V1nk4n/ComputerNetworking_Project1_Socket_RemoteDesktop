@@ -204,7 +204,7 @@ class AppProcess(Frame):
         global pname
         pstart = tk.Toplevel(root)
         pstart["bg"] = BACKGROUND
-        pstart.geometry("420x70")
+        pstart.geometry("420x70+200+500")
         pname = tk.StringVar(pstart)
         tk.Entry(pstart, textvariable=pname, width=38, borderwidth=5).place(x=10, y=20)
         tk.Button(
