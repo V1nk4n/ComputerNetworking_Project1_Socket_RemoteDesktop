@@ -46,12 +46,11 @@ class DirectoryTree(Frame):
        
         self.frame = tk.Frame(self, height = 400, width = 500)
         self.tree = ttk.Treeview(self.frame)
-
         self.frame.place(
             x=16,
             y=85,
             width=700,
-            height=400,
+            height=300,
         )
         self.insText1 = "PATH"
         self.label1 = tk.Label(self.frame, text=self.insText1)
@@ -62,14 +61,14 @@ class DirectoryTree(Frame):
         ysb = ttk.Scrollbar(self.frame, orient='vertical', command=self.tree.yview)
         xsb = ttk.Scrollbar(self.frame, orient='horizontal', command=self.tree.xview)
         self.tree.configure(yscroll=ysb.set, xscroll=xsb.set)
-        self.tree.heading('#0', text='Server\'s Directory Tree', anchor='w')
+        self.tree.heading('#0', text='Directory Tree', anchor='w')
         self.tree.pack(fill = tk.BOTH)
         self.tree.bind('<<TreeviewOpen>>', self.open_node)
         self.tree.bind("<<TreeviewSelect>>", self.select_node)
 
-        self.insText2 = "Ấn nút SHOW để xem cây thư mục"
-        self.label2 = tk.Label(self.frame, text=self.insText2)
-        self.label2.pack(fill = tk.X)
+        # self.insText2 = "Ấn nút SHOW để xem cây thư mục"
+        # self.label2 = tk.Label(self.frame, text=self.insText2)
+        # self.label2.pack(fill = tk.X)
 
         self.button_show_tree = Button(self, text = 'SHOW', width = 20, height = 5,
             borderwidth=0,

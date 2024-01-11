@@ -1,6 +1,6 @@
 from tkinter import *
 from PIL import Image, ImageTk
-from DC_Constant import BACKGROUND,WIDTH, HEIGHT
+from DC_Constant import BACKGROUND,WIDTH, HEIGHT, myButton
 
 class Menu(Frame):
     def __init__(self, parent):
@@ -16,15 +16,18 @@ class Menu(Frame):
         parent.geometry("900x500+200+200")
         self.grid(row=0, column=0, sticky="nsew")
 
-        self.button_Live_Screen = Button(
-            self,
-            text="Live Screen",
-            font=("Tim New Roman",15),
-            bg="#fdebd3",
-            fg="black",
-            borderwidth=3,
-            highlightthickness=2,
-        )
+        self.button_Live_Screen = myButton(self)
+        self.button_Live_Screen.configure(text="Live Screen")
+
+        # self.button_Live_Screen = Button(
+        #     self,
+        #     text="Live Screen",
+        #     font=("Tim New Roman",15),
+        #     bg="#fdebd3",
+        #     fg="black",
+        #     borderwidth=3,
+        #     highlightthickness=2,
+        # )
         self.button_Live_Screen.place(x=167, y=52, width=200, height=60)
 
         self.button_App_Process = Button(

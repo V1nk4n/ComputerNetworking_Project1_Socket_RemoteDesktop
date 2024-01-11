@@ -26,17 +26,17 @@ class AppProcess(Frame):
         self.scroll = tk.Scrollbar(self, orient="vertical", command=self.tab.yview)
         self.scroll.place(x=803, y=12, height=350)
         self.tab.configure(yscrollcommand=self.scroll.set)
-        self.tab["columns"] = ("Name", "ID", "CPU Percent", "Memory")
+        self.tab["columns"] = ("Name", "ID", "VM", "CPU")
         self.tab.column("#0", width=0)
         self.tab.column("Name", anchor="center", width=120, minwidth=10, stretch=True)
         self.tab.column("ID", anchor="center", width=120, minwidth=10, stretch=True)
-        self.tab.column("CPU Percent", anchor="center", width=120, minwidth=10, stretch=True)
-        self.tab.column("Memory", anchor="center", width=120, minwidth=10, stretch=True)
+        self.tab.column("VM", anchor="center", width=120, minwidth=10, stretch=True)
+        self.tab.column("CPU", anchor="center", width=120, minwidth=10, stretch=True)
         self.tab.heading("#0", text="")
         self.tab.heading("Name", text="Name Application")
         self.tab.heading("ID", text="ID Application")
-        self.tab.heading("CPU Percent", text="CPU Percent")
-        self.tab.heading("Memory", text="Memory")
+        self.tab.heading("VM", text="VM")
+        self.tab.heading("CPU", text="CPU")
         self.tab.place(x=93, y=12, width=713, height=350)
 
         self.button_process = Button(
@@ -53,9 +53,9 @@ class AppProcess(Frame):
         )
         self.button_process.place(x=170, y=375, width=135, height=50)
 
-        self.button_list = Button(
+        self.button_show = Button(
             self,
-            text="LIST",
+            text="SHOW",
             font=("Tim New Roman",15),
             width=20,
             height=5,
@@ -65,7 +65,7 @@ class AppProcess(Frame):
             highlightthickness=2,
             command=lambda: self.list(client, self.tab, self.button_process["text"]),
         )
-        self.button_list.place(x=170, y=437, width=135, height=50)
+        self.button_show.place(x=170, y=437, width=135, height=50)
 
         self.button_start = Button(
             self,
@@ -81,9 +81,9 @@ class AppProcess(Frame):
         )
         self.button_start.place(x=382, y=375, width=135, height=50)
 
-        self.button_kill = Button(
+        self.button_end = Button(
             self,
-            text="KILL",
+            text="END",
             width=20,
             height=5,
             bg="#fdebd3",
@@ -93,7 +93,7 @@ class AppProcess(Frame):
             highlightthickness=2,
             command=lambda: self.end(parent, client),
         )
-        self.button_kill.place(x=382, y=437, width=135, height=50)
+        self.button_end.place(x=382, y=437, width=135, height=50)
 
         self.button_clear = Button(
             self,
@@ -143,15 +143,15 @@ class AppProcess(Frame):
             button.configure(text="APPLICATION")
             tab.heading("Name", text="Name Process")
             tab.heading("ID", text="ID Process")
-            tab.heading("CPU Percent", text="CPU Percent")
-            tab.heading("Memory", text="Memory")
+            tab.heading("VM", text="VM")
+            tab.heading("CPU", text="CPU")
             
         else:
             button.configure(text="PROCESS")
             tab.heading("Name", text="Name Application")
             tab.heading("ID", text="ID Application")
-            tab.heading("CPU Percent", text="CPU Percent")
-            tab.heading("Memory", text="Memory")
+            tab.heading("VM", text="VM")
+            tab.heading("CPU", text="CPU")
         return
 
 
