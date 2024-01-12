@@ -151,6 +151,13 @@ class AppProcess(Frame):
         myButton(
             pstart,
             text="Start",
+            font=("Times New Roman",15),
+            width=10,
+            height=1,
+            fg="black",
+            bg="#fdebd3",
+            borderwidth=3,
+            highlightthickness=2,
             command=lambda: self.send_start(main_connect),
         ).place(x=275, y=15)
         return
@@ -158,14 +165,21 @@ class AppProcess(Frame):
 
     def end(self, parent, main_connect):
         global pid
-        kill = tk.Toplevel(parent)
-        kill["bg"] = BACKGROUND
-        kill.geometry("420x70+450+300")
-        pid = tk.StringVar(kill)
-        tk.Entry(kill, textvariable=pid, width=38, borderwidth=5).place(x=10, y=20)
+        end = tk.Toplevel(parent)
+        end["bg"] = BACKGROUND
+        end.geometry("420x70+450+300")
+        pid = tk.StringVar(end)
+        tk.Entry(end, textvariable=pid, width=38, borderwidth=5).place(x=10, y=20)
         myButton(
-            kill,
+            end,
             text="End",
+            font=("Times New Roman",15),
+            width=10,
+            height=1,
+            fg="black",
+            bg="#fdebd3",
+            borderwidth=3,
+            highlightthickness=2,
             command=lambda: self.send_end(main_connect),
         ).place(x=275, y=15)
         return

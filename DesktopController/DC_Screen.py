@@ -34,7 +34,7 @@ class Screen(Frame):
         self.button_save.place(x=167, y=HEIGHT-40, width=200, height=30)
 
         self.button_back = myButton(self)
-        self.button_back(text="Back", command=lambda: self.click_back())
+        self.button_back.configure(text="Back", command=lambda: self.click_back())
         self.button_back.place(x=534, y=HEIGHT-40, width=200, height=30)
 
         self.start = Thread(target=self.recv_img, daemon=True)
