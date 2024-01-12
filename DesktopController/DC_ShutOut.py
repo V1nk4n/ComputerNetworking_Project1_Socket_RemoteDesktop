@@ -7,22 +7,24 @@ def click_close(window, main_connect):
     window.destroy()
     return
 
-def shutdown(com_con):
-    com_con.sendall("SHUTDOWN".encode(FORMAT))
-def logout(com_con):
-    com_con.sendall("LOGOUT".encode(FORMAT))
+def shutdown(main_connect):
+    main_connect.sendall("SHUTDOWN".encode(FORMAT))
+    quit
+def logout(main_connect):
+    main_connect.sendall("LOGOUT".encode(FORMAT))
+    quit
 
-def shutout(parent, com_con):
+def shutout(parent, main_connect):
     window = tk.Toplevel(parent)
     window.geometry("200x160+450+300")
     window.grab_set()
-    window.protocol("WM_DELETE_WINDOW", lambda: click_close(window, com_con))
+    window.protocol("WM_DELETE_WINDOW", lambda: click_close(window, main_connect))
     shutdown_option = tk.Button(
         window, text = 'SHUTDOWN', width = 22, height = 2, fg = "black", bg = BACKGROUND, 
-        command = lambda: shutdown(com_con), padx = 20, pady = 20)
+        command = lambda: shutdown(main_connect), padx = 20, pady = 20)
     shutdown_option.grid(row = 0, column = 0)
     logout_option = tk.Button(
         window, text = 'LOGOUT', width = 22, height = 2, fg = BACKGROUND, bg = "black", 
-        command = lambda: logout(com_con), padx = 20, pady = 20)
+        command = lambda: logout(main_connect), padx = 20, pady = 20)
     logout_option.grid(row = 1, column = 0)
     window.mainloop()

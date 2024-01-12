@@ -29,28 +29,12 @@ class Screen(Frame):
         self.label = tk.Label(self)
         self.label.place(x=30, y=0, width=WIDTH-60, height=HEIGHT-60)
         
-        self.button_save = tk.Button(
-            self,
-            text="Save",
-            font=("Tim New Roman",15),
-            bg="#fdebd3",
-            fg="black",
-            borderwidth=3,
-            highlightthickness=2,
-            command=lambda: self.click_save(),
-        )
+        self.button_save = myButton(self)
+        self.button_save.configure(text="Save", command=lambda: self.click_save())
         self.button_save.place(x=167, y=HEIGHT-40, width=200, height=30)
 
-        self.button_back = tk.Button(
-            self,
-            text="Back",
-            font=("Tim New Roman",15),
-            bg="#fdebd3",
-            fg="black",
-            borderwidth=3,
-            highlightthickness=2,
-            command=lambda: self.click_back(),
-        )
+        self.button_back = myButton(self)
+        self.button_back(text="Back", command=lambda: self.click_back())
         self.button_back.place(x=534, y=HEIGHT-40, width=200, height=30)
 
         self.start = Thread(target=self.recv_img, daemon=True)

@@ -3,10 +3,10 @@ import struct
 import tkinter as tk
 from tkinter import *
 from tkinter import ttk
-from DC_Constant import BACKGROUND, BUFFERSIZE, WIDTH, HEIGHT, myButton
+from DC_Constant import BACKGROUND, FORMAT, BUFFERSIZE, WIDTH, HEIGHT, myButton
 
 class AppProcess(Frame):
-    def __init__(self, parent, client):
+    def __init__(self, parent, main_connect):
         Frame.__init__(self, parent)
         self.configure(
             bg=BACKGROUND,
@@ -19,7 +19,7 @@ class AppProcess(Frame):
         parent.geometry("900x500+200+200")
         self.grid(row=0, column=0, sticky="nsew")
         
-        self.client=client
+        self.client=main_connect
         self.status = True
 
         self.tab = ttk.Treeview(self, height=18, selectmode="browse")
@@ -39,107 +39,47 @@ class AppProcess(Frame):
         self.tab.heading("CPU", text="CPU")
         self.tab.place(x=93, y=12, width=713, height=350)
 
-        self.button_process = Button(
-            self,
-            text="PROCESS",
-            font=("Tim New Roman",15),
-            width=20,
-            height=5,
-            bg="#fdebd3",
-            fg="black",
-            borderwidth=3,
-            highlightthickness=2,
-            command=lambda: self.switch(self.button_process, self.tab),
-        )
+        self.button_process = myButton(self)
+        self.button_process.configure(text="PROCESS", command=lambda: self.switch(self.button_process, self.tab))
         self.button_process.place(x=170, y=375, width=135, height=50)
 
-
-        self.button_show = Button(
-            self,
-            text="SHOW",
-            font=("Tim New Roman",15),
-            width=20,
-            height=5,
-            bg="#fdebd3",
-            fg="black",
-            borderwidth=3,
-            highlightthickness=2,
-            command=lambda: self.list(client, self.tab, self.button_process["text"]),
-        )
+        self.button_show = myButton(self)
+        self.button_show.configure(text="SHOW", command=lambda: self.list(main_connect, self.tab, self.button_process["text"]))
         self.button_show.place(x=170, y=437, width=135, height=50)
 
-        self.button_start = Button(
-            self,
-            text="START",
-            font=("Tim New Roman",15),
-            width=20,
-            height=5,
-            bg="#fdebd3",
-            fg="black",
-            borderwidth=3,
-            highlightthickness=2,
-            command=lambda: self.start(parent, client),
-        )
+        self.button_start = myButton(self)
+        self.button_start.configure(text="START", command=lambda: self.start(parent, main_connect))
         self.button_start.place(x=382, y=375, width=135, height=50)
 
-        self.button_end = Button(
-            self,
-            text="END",
-            width=20,
-            height=5,
-            bg="#fdebd3",
-            fg="black",
-            font=("Tim New Roman",15),
-            borderwidth=3,
-            highlightthickness=2,
-            command=lambda: self.end(parent, client),
-        )
+        self.button_end = myButton(self)
+        self.button_end.configure(text="END", command=lambda: self.end(parent, main_connect))
         self.button_end.place(x=382, y=437, width=135, height=50)
 
-        self.button_clear = Button(
-            self,
-            text="CLEAR",
-            width=20,
-            height=5,
-            bg="#fdebd3",
-            fg="black",
-            font=("Tim New Roman",15),
-            borderwidth=3,
-            highlightthickness=2,
-            command=lambda: self.clear(self.tab),
-        )
+        self.button_clear = myButton(self)
+        self.button_clear.configure(text="CLEAR", command=lambda: self.clear(self.tab))
         self.button_clear.place(x=594, y=375, width=135, height=50)
 
-        self.button_back = Button(
-            self,
-            text="BACK",
-            width=20,
-            height=5,
-            bg="#fdebd3",
-            fg="black",
-            font=("Tim New Roman",15),
-            borderwidth=3,
-            highlightthickness=2,
-            command=lambda: self.back(),
-        )
+        self.button_back = myButton(self)
+        self.button_back.configure(text="BACK", command=lambda: self.back())
         self.button_back.place(x=594, y=437, width=135, height=50)
-    def recvall(self,sock, size):
+        
+    def recvall(self, main_connect, size):
         message = bytearray()
         while len(message) < size:
-            buffer = sock.recv(size - len(message))
+            buffer = main_connect.recv(size - len(message))
             if not buffer:
                 raise EOFError("Could not receive all expected data!")
             message.extend(buffer)
         return bytes(message)
 
-    def receive(self,client):
-        packed = self.recvall(client, struct.calcsize("!I"))
+    def receive(self,main_connect):
+        packed = self.recvall(main_connect, struct.calcsize("!I"))
         size = struct.unpack("!I", packed)[0]
-        data = self.recvall(client, size)
+        data = self.recvall(main_connect, size)
         return data
 
 
-    def switch(self,button, tab):
+    def switch(self, button, tab):
         if button["text"] == "PROCESS":
             button.configure(text="APPLICATION")
             tab.heading("Name", text="Name Process")
@@ -156,11 +96,11 @@ class AppProcess(Frame):
         return
 
 
-    def send_end(self,client):
+    def send_end(self, main_connect):
         global pid
-        client.sendall(bytes("0", "utf8"))
-        client.sendall(bytes(str(pid.get()), "utf8"))
-        message = client.recv(BUFFERSIZE).decode("utf8")
+        main_connect.sendall(bytes("0", "utf8"))
+        main_connect.sendall(bytes(str(pid.get()), "utf8"))
+        message = main_connect.recv(BUFFERSIZE).decode("utf8")
         if "1" in message:
             tk.messagebox.showinfo(message="End task!")
         else:
@@ -168,16 +108,16 @@ class AppProcess(Frame):
         return
 
 
-    def list(self,client, tab, s):
-        client.sendall(bytes("1", "utf8"))
-        client.sendall(bytes(s, "utf8"))
-        list1 = self.receive(client)
+    def list(self, main_connect, tab, s):
+        main_connect.sendall("1".encode(FORMAT))
+        main_connect.sendall(s.encode(FORMAT))
+        list1 = self.receive(main_connect)
         list1 = pickle.loads(list1)
-        list2 = self.receive(client)
+        list2 = self.receive(main_connect)
         list2 = pickle.loads(list2)
-        list3 = self.receive(client)
+        list3 = self.receive(main_connect)
         list3 = pickle.loads(list3)
-        list4 = self.receive(client)
+        list4 = self.receive(main_connect)
         list4 = pickle.loads(list4)
         for i in tab.get_children():
             tab.delete(i)
@@ -188,61 +128,48 @@ class AppProcess(Frame):
         return
 
 
-    def clear(self,tab):
+    def clear(self, tab):
         for i in tab.get_children():
             tab.delete(i)
         return
 
 
-    def send_start(self,client):
+    def send_start(self, main_connect):
         global pname
-        client.sendall(bytes("3", "utf8"))
-        client.sendall(bytes(str(pname.get()), "utf8"))
+        main_connect.sendall("3".encode(FORMAT))
+        main_connect.sendall(bytes(str(pname.get()), "utf8"))
         return
 
 
-    def start(self, root, client):
+    def start(self, parent, main_connect):
         global pname
-        pstart = tk.Toplevel(root)
+        pstart = tk.Toplevel(parent)
         pstart["bg"] = BACKGROUND
         pstart.geometry("420x70+450+300")
         pname = tk.StringVar(pstart)
         tk.Entry(pstart, textvariable=pname, width=38, borderwidth=5).place(x=10, y=20)
-        tk.Button(
+        myButton(
             pstart,
             text="Start",
-            font=("Times New Roman",15),
-            width=10,
-            height=1,
-            fg="black",
-            bg="#fdebd3",
-            borderwidth=3,
-            highlightthickness=2,
-            command=lambda: self.send_start(client),
+            command=lambda: self.send_start(main_connect),
         ).place(x=275, y=15)
         return
 
 
-    def end(self, root, client):
+    def end(self, parent, main_connect):
         global pid
-        kill = tk.Toplevel(root)
+        kill = tk.Toplevel(parent)
         kill["bg"] = BACKGROUND
         kill.geometry("420x70+450+300")
         pid = tk.StringVar(kill)
         tk.Entry(kill, textvariable=pid, width=38, borderwidth=5).place(x=10, y=20)
-        tk.Button(
+        myButton(
             kill,
             text="End",
-            font=("Times New Roman",15),
-            width=10,
-            height=1,
-            fg="black",
-            bg="#fdebd3",
-            borderwidth=3,
-            highlightthickness=2,
-            command=lambda: self.send_end(client),
+            command=lambda: self.send_end(main_connect),
         ).place(x=275, y=15)
         return
+    
     def back(self):
         self.status=False
         self.destroy()

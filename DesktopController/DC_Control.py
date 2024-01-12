@@ -4,13 +4,13 @@ import socket
 from threading import Thread, Event
 from tkinter import Frame
 from tkinter.filedialog import asksaveasfile
-
-from DC_Constant import BACKGROUND, BUFFERSIZE, WIDTH, HEIGHT, FORMAT, myButton
 from PIL import Image, ImageTk
+from DC_Constant import BACKGROUND, BUFFERSIZE, WIDTH, HEIGHT, FORMAT, myButton
+
 
 
 class Control(Frame):
-    def __init__(self, parent, com_con, screen_con, key_con, mouse_con):
+    def __init__(self, parent, main_connect, screen_con, key_con, mouse_con):
         Frame.__init__(self, parent)
         self.configure(
             bg=BACKGROUND,
@@ -29,24 +29,15 @@ class Control(Frame):
 
         self.label = tk.Label(self)
         self.label.place(x=30, y=0, width=WIDTH-60, height=HEIGHT-60)
-
-        self.button_back = tk.Button(
-            self,
-            text="Back",
-            font=("Tim New Roman",15),
-            bg="#fdebd3",
-            fg="black",
-            borderwidth=3,
-            highlightthickness=2,
-            command=lambda: self.click_back(),
-        )
+        
+        self.button_back = myButton(self)
+        self.button_back.configure(text="Back", command=lambda: self.click_back())
         self.button_back.place(x=350, y=HEIGHT-45, width=200, height=30)
 
         self.stop_event = Event()
-
         self.disconnect_event = Event()
 
-        self.communicationConnection = com_con
+        self.mainConnection = main_connect
         self.screenConnection = screen_con
         self.keyConnection = key_con
         self.mouseConnection = mouse_con
@@ -69,12 +60,12 @@ class Control(Frame):
     def CheckStop(self):
         while not self.stop_event.is_set():
             if self.status:
-                self.communicationConnection.sendall("CONTINUE".encode(FORMAT))
+                self.mainConnection.sendall("CONTINUE".encode(FORMAT))
             else:
-                self.communicationConnection.sendall("STOP".encode(FORMAT))
+                self.mainConnection.sendall("STOP".encode(FORMAT))
 
         # Gửi lệnh STOP và đóng kết nối
-        self.communicationConnection.sendall("STOP".encode(FORMAT))
+        self.mainConnection.sendall("STOP".encode(FORMAT))
         self.disconnect_event.set()
 
         # Đợi cho các luồng kết thúc

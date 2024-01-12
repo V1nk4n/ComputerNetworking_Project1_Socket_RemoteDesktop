@@ -3,7 +3,7 @@ import tkinter as tk
 import tkinter.ttk as ttk
 import pickle
 from tkinter import Text, Button,filedialog, messagebox, Frame
-from tkinter import*
+from tkinter import *
 from DC_Constant import BACKGROUND, BUFFERSIZE, WIDTH, HEIGHT, FORMAT, myButton
 
 def list_dir(main_connect, path):
@@ -69,58 +69,26 @@ class DirectoryTree(Frame):
         self.insText2 = "Ấn nút SHOW để xem cây thư mục"
         self.label2 = tk.Label(self.frame, text=self.insText2)
         self.label2.pack(fill = tk.X)
-
-        self.button_show_tree = Button(self, text = 'SHOW', width = 20, height = 5,
-            borderwidth=0,
-            highlightthickness=0,
-            command=self.show_tree,
-            fg = "black",
-            bg = "#fdebd3", 
-            font=("Tim New Roman",15),
-            relief="flat"
-        )
+        
+        self.button_show_tree = myButton(self)
+        self.button_show_tree.configure(text='SHOW', command=self.show_tree, relief="flat")
         self.button_show_tree.place(x=112,y=349,width=150,height=53)
+        
         # chi gui vao folder th
-        self.button_send_file = Button(self, text = 'SEND', width = 20, height = 5,
-            borderwidth=0,
-            highlightthickness=0,
-            command=self.send_file,
-            fg = "black", 
-            bg = "#fdebd3", 
-            font=("Tim New Roman",15),
-            relief="flat"
-        )
+        self.button_send_file = myButton(self)
+        self.button_send_file.configure(text='SEND', command=self.send_file, relief="flat")
         self.button_send_file.place(x=374,y=349,width=150,height=53)
         # chi copy file
-        self.button_copy_file = Button(self, text = 'COPY', width = 20, height = 5, 
-            borderwidth=0,
-            highlightthickness=0,
-            command=self.copy_file,
-            fg = "black", 
-            bg = "#fdebd3", 
-            font=("Tim New Roman",15),
-            relief="flat"
-        )
+        self.button_copy_file = myButton(self)
+        self.button_copy_file.configure(text='COPY', command=self.copy_file, relief="flat")
         self.button_copy_file.place(x=374,y=426,width=150,height=53)
-        self.button_delete = Button(self, text = 'DELETE', width = 20, height = 5, 
-            borderwidth=0,
-            highlightthickness=0,
-            command=self.delete_file,
-            fg = "black", 
-            bg = "#fdebd3", 
-            font=("Tim New Roman",15),
-            relief="flat"
-        )
+        
+        self.button_delete = myButton(self)
+        self.button_delete.configure(text='DELETE', command=self.delete_file, relief="flat")
         self.button_delete.place(x=112,y=426,width=150,height=53)
-        self.button_back = Button(self, text = 'BACK', width = 20, height = 5,
-            borderwidth=0,
-            highlightthickness=0,
-            command= self.click_back,
-            fg = "black", 
-            bg = "#fdebd3", 
-            font=("Tim New Roman",15),
-            relief="flat"
-        )
+        
+        self.button_back = myButton(self)
+        self.button_back.configure(text='BACK', command=self.click_back, relief="flat")
         self.button_back.place(x=636,y=385,width=150,height=53)
 
     def insert_node(self, parent, text, abspath, isFolder):
@@ -184,7 +152,7 @@ class DirectoryTree(Frame):
 
     # copy file from client to server
     def send_file(self):
-        self.client.sendall("COPYTO".encode())
+        self.client.sendall("SEND".encode())
         isOk = self.client.recv(BUFFERSIZE).decode()
         if (isOk == "OK"):
             filename = filedialog.askopenfilename(title="Select File", filetypes=[("All Files", "*.*")])

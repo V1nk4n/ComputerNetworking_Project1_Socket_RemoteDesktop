@@ -36,16 +36,8 @@ class Login(Frame):
         )
         self.ip_input.place(x=300,y=133,width=300,height=50,)
 
-        self.connect = Button(
-            self,
-            text="Connect",
-            font=("Tim New Roman",15),
-            bg="#fdebd3",
-            fg="black",
-            borderwidth=3,
-            highlightthickness=2,
-        )
-
+        self.connect = myButton(self)
+        self.connect.configure(text="Connect")
         self.connect.place(x=300,y=316,height=50,width=300,)
 
 

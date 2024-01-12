@@ -103,7 +103,7 @@ def directory(main_connect):
                         break
         
         # copy file from client to server
-        elif (mod == "COPYTO"):
+        elif (mod == "SEND"):
             main_connect.sendall("OK".encode())
             send_file(main_connect)
             isMod = False
