@@ -1,6 +1,4 @@
-import tkinter as tk
 from tkinter import *
-from tkinter import ttk
 
 HOST = "127.0.0.1"
 SERVER_PORT = 61000

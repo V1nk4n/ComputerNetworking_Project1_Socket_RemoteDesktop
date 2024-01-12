@@ -2,7 +2,6 @@ import os
 import pickle
 import struct
 import subprocess
-
 import psutil
 from RD_Constant import BUFFERSIZE
 

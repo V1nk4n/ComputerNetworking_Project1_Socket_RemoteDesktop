@@ -1,8 +1,8 @@
 from threading import Thread, Event
-from RD_Constant import FORMAT, BUFFERSIZE
 import pyautogui as pag
 import io
 import socket
+from RD_Constant import FORMAT, BUFFERSIZE
 
 def controlled(com_con, screen_con, key_con, mouse_con):
 
@@ -67,7 +67,6 @@ def KeyControlled(key_con):
         if not buffer:
             break
         
-        print(buffer)
         pag.press(buffer)
         
         key_con.sendall(buffer.encode(FORMAT))

@@ -25,8 +25,6 @@ class Control(Frame):
         
         self.window = parent
 
-        self.status = True
-
         self.label = tk.Label(self)
         self.label.place(x=30, y=0, width=WIDTH-60, height=HEIGHT-60)
         
@@ -41,12 +39,13 @@ class Control(Frame):
         self.screenConnection = screen_con
         self.keyConnection = key_con
         self.mouseConnection = mouse_con
-        
+
+        self.status = True
         self.screen_status = True
         self.key_status = True
         self.mouse_status = True
 
-        # thread
+        #Luồng
         self.checkThread = Thread(target=self.CheckStop)
         self.screenThread = Thread(target=self.ChangeImage)
         self.keyThread = Thread(target=self.KeyControl)
@@ -73,7 +72,7 @@ class Control(Frame):
         self.keyThread.join()
         self.mouseThread.join()
 
-        # Đóng GUI
+        # Đóng Control Desktop
         self.destroy()
         
     def ChangeImage(self):
@@ -171,8 +170,6 @@ class Control(Frame):
     def scroll(self, event):
         #Cuộn chuột
         if(event.x>=0 and event.x<=WIDTH-60 and event.y>=0 and event.y<=HEIGHT-60):
-            # x = int(event.x*1920/(WIDTH-60))
-            # y = int(event.y*1080/(HEIGHT-60))
             x = event.delta
             y = 0
             buffer = f"scroll,{x},{y}"
@@ -181,6 +178,7 @@ class Control(Frame):
             buffer =""
 
     def click_back(self):
+        #Nhấn trở lại giao diện chính
         self.status = False
         self.screen_status = False
         self.KeyControl()
