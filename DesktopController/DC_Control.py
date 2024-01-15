@@ -1,6 +1,5 @@
 import io
 import tkinter as tk
-import socket
 from threading import Thread, Event
 from tkinter import Frame
 from tkinter.filedialog import asksaveasfile

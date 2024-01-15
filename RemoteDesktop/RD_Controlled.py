@@ -1,7 +1,6 @@
 from threading import Thread, Event
 import pyautogui as pag
 import io
-import socket
 from RD_Constant import FORMAT, BUFFERSIZE
 
 def controlled(com_con, screen_con, key_con, mouse_con):

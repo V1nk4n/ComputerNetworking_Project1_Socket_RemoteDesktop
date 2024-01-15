@@ -2,7 +2,6 @@ import socket
 from tkinter import *
 from tkinter import messagebox
 from tkinter.ttk import *
-
 from DC_Home import Menu
 from DC_Login import Login
 import DC_ShutOut as sot
@@ -12,8 +11,7 @@ from DC_Control import Control
 from DC_KeyLogger import Keylogger
 from DC_AppProcess import AppProcess
 from DC_Directory import DirectoryTree
-
-from DC_Constant import FORMAT, HOST, SERVER_PORT
+from DC_Constant import FORMAT, SERVER_PORT
 
 main_connect = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 

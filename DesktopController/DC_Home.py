@@ -1,5 +1,4 @@
 from tkinter import *
-from PIL import Image, ImageTk
 from DC_Constant import BACKGROUND, WIDTH, HEIGHT, myButton
 
 class Menu(Frame):

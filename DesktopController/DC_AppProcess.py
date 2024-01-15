@@ -148,7 +148,7 @@ class AppProcess(Frame):
         pstart.geometry("420x70+450+300")
         pname = tk.StringVar(pstart)
         tk.Entry(pstart, textvariable=pname, width=38, borderwidth=5).place(x=10, y=20)
-        myButton(
+        tk.Button(
             pstart,
             text="Start",
             font=("Times New Roman",15),
@@ -170,7 +170,7 @@ class AppProcess(Frame):
         end.geometry("420x70+450+300")
         pid = tk.StringVar(end)
         tk.Entry(end, textvariable=pid, width=38, borderwidth=5).place(x=10, y=20)
-        myButton(
+        tk.Button(
             end,
             text="End",
             font=("Times New Roman",15),

@@ -39,7 +39,7 @@ class Screen(Frame):
 
         self.start = Thread(target=self.recv_img, daemon=True)
         self.start.start()
-
+    #Nhận ảnh chụp màn hình từ Server
     def recv_img(self):
         while self.status:
             #Nhận chiều dài của hình ảnh ở kiểu byte
@@ -61,15 +61,15 @@ class Screen(Frame):
             image = Image.open(image_byte_io).resize((WIDTH-60,HEIGHT-60))
             #Tạo đối tượng PhotoImage để đưa lên window
             photo = ImageTk.PhotoImage(image)
-            
+            #Tạo ô chứa ảnh chụp màn hình
             self.label.configure(image=photo)
             self.label.image = photo
-
+            #Chọn nút lưu ảnh
             if self.on_save:
                 self.frame = image_byte_array
                 self.save_img()
                 self.on_save = False
-
+            #Chọn nút back
             if self.status:
                 self.screenConnection.sendall("CONTINUE".encode(FORMAT))
             else:
@@ -81,7 +81,7 @@ class Screen(Frame):
 
     def click_back(self):
         self.status = False
-
+    #Lưu ảnh vào máy Client
     def save_img(self):
         if self.frame == None:
             return

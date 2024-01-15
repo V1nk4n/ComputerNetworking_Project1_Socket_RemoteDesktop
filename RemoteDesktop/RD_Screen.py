@@ -1,7 +1,6 @@
 import pyautogui as pag
 import io
-import time
-from RD_Constant import DELAY, FORMAT, BUFFERSIZE
+from RD_Constant import FORMAT, BUFFERSIZE
 
 def send_img(screenConnection):
         while screenConnection:
