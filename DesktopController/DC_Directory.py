@@ -45,7 +45,7 @@ class DirectoryTree(Frame):
         self.grid(row=0, column=0, sticky="nsew")
         self.status = True
 
-        self.client =  main_connect
+        self.main_connect =  main_connect
         self.curPath = " "
         self.nodes = dict()
        
@@ -125,7 +125,7 @@ class DirectoryTree(Frame):
             self.tree.delete(self.tree.get_children(node))
             try:
                 #Lấy danh sách folder và file con sau đó thêm vào cây
-                dirs = list_dir(self.client, absPath)
+                dirs = list_dir(self.main_connect, absPath)
                 for p in dirs:
                     self.insert_node(node, p[0], os.path.join(absPath, p[0]), p[1])
             except:
@@ -163,15 +163,15 @@ class DirectoryTree(Frame):
     def show_tree(self):
         #Xóa cây để hiện cây mới
         self.delete_tree()
-        self.client.sendall("SHOW".encode())
+        self.main_connect.sendall("SHOW".encode())
         #Nhận size của cây mới (Gồm tên các ổ đĩa)
-        data_size = int(self.client.recv(BUFFERSIZE))
+        data_size = int(self.main_connect.recv(BUFFERSIZE))
         #Nhận size thành công
-        self.client.sendall("Receive size successfully".encode())
+        self.main_connect.sendall("Receive size successfully".encode())
         #Nhận dữ liệu
         data = b""
         while len(data) < data_size:
-            packet = self.client.recv(BUFFERSIZE)
+            packet = self.main_connect.recv(BUFFERSIZE)
             data += packet
         #Chuyển dữ liệu từ byte về folder bình thưởng
         loaded_list = pickle.loads(data)
@@ -185,14 +185,14 @@ class DirectoryTree(Frame):
                 continue
 
     def send_file(self):
-        self.client.sendall("SEND".encode())
-        isOk = self.client.recv(BUFFERSIZE).decode()
+        self.main_connect.sendall("SEND".encode())
+        isOk = self.main_connect.recv(BUFFERSIZE).decode()
         if (isOk == "OK"):
             #Chọn file cần gửi đến Server
             pathfile = filedialog.askopenfilename(title="Select File", filetypes=[("All Files", "*.*")])
             if pathfile == None or pathfile == "":
-                self.client.sendall("-1".encode())
-                temp = self.client.recv(BUFFERSIZE)
+                self.main_connect.sendall("-1".encode())
+                temp = self.main_connect.recv(BUFFERSIZE)
                 return
             #Folder lưu file được nhận bên Server
             destPath = self.curPath + "\\"
@@ -200,17 +200,17 @@ class DirectoryTree(Frame):
             filesize = os.path.getsize(pathfile)
             #Gửi tên file, kích cỡ của file, folder lưu trữ bên Server
             filename = os.path.basename(pathfile)
-            self.client.sendall(f"{filename},{filesize},{destPath}".encode())
-            isReceived = self.client.recv(BUFFERSIZE).decode()
+            self.main_connect.sendall(f"{filename},{filesize},{destPath}".encode())
+            isReceived = self.main_connect.recv(BUFFERSIZE).decode()
             if (isReceived == "received filename"):
                 try:
                     #Đọc và gửi dữ liệu của file
                     with open(pathfile, "rb") as f:
                         data = f.read()
-                        self.client.sendall(data)
+                        self.main_connect.sendall(data)
                 except:
-                    self.client.sendall("-1".encode())
-                isReceivedContent = self.client.recv(BUFFERSIZE).decode()
+                    self.main_connect.sendall("-1".encode())
+                isReceivedContent = self.main_connect.recv(BUFFERSIZE).decode()
                 if (isReceivedContent == "received content"):
                     messagebox.showinfo(message = "Copy file successfully!")
                     return True
@@ -218,30 +218,30 @@ class DirectoryTree(Frame):
         return False
 
     def copy_file(self):
-        self.client.sendall("COPY".encode())
-        isOk = self.client.recv(BUFFERSIZE).decode()
+        self.main_connect.sendall("COPY".encode())
+        isOk = self.main_connect.recv(BUFFERSIZE).decode()
         if (isOk == "OK"):
             try:
                 #Chọn thư mục chưa file được copy
                 destPath = filedialog.askdirectory()
                 if destPath == None or destPath == "":
-                    self.client.sendall("-1".encode())
-                    temp = self.client.recv(BUFFERSIZE)
+                    self.main_connect.sendall("-1".encode())
+                    temp = self.main_connect.recv(BUFFERSIZE)
                     return
                 #Gửi đường đi được chọn hiện tại qua Server
-                self.client.sendall(self.curPath.encode())
+                self.main_connect.sendall(self.curPath.encode())
                 #Lấy tên file
                 filename = os.path.basename(self.curPath)
                 #Nhận size của file
-                filesize = int(self.client.recv(100))
+                filesize = int(self.main_connect.recv(100))
                 if (filesize == -1):
                     messagebox.showerror(message = "Error! Cannot copy file.")  
                     return
-                self.client.sendall("received filesize".encode())
+                self.main_connect.sendall("received filesize".encode())
                 #Nhận dữ liệu của file
                 data = b""
                 while len(data) < filesize:
-                    packet = self.client.recv(999999)
+                    packet = self.main_connect.recv(999999)
                     data += packet
                 #Tạo ra file và ghi dữ liệu vào
                 with open(destPath + "\\" + filename, "wb") as f:
@@ -253,13 +253,13 @@ class DirectoryTree(Frame):
             messagebox.showerror(message = "Error! Cannot copy file.") 
 
     def delete_file(self):
-        self.client.sendall("DEL".encode())
-        isOk = self.client.recv(BUFFERSIZE).decode()
+        self.main_connect.sendall("DEL".encode())
+        isOk = self.main_connect.recv(BUFFERSIZE).decode()
         if (isOk == "OK"):
             #Gửi đường đi đang được chọn để xóa
-            self.client.sendall(self.curPath.encode())
+            self.main_connect.sendall(self.curPath.encode())
             #Nhận thông tin xóa thành công hay không
-            res = self.client.recv(BUFFERSIZE).decode()
+            res = self.main_connect.recv(BUFFERSIZE).decode()
             if (res == "ok"):
                 messagebox.showinfo(message = "Delete file successfully!")
             else:
@@ -270,4 +270,4 @@ class DirectoryTree(Frame):
     def click_back(self):
         self.status = False
         self.destroy()
-        self.client.sendall("STOP".encode())
+        self.main_connect.sendall("STOP".encode())
