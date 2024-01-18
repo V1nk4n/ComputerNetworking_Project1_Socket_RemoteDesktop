@@ -8,7 +8,7 @@ from RD_Constant import BUFFERSIZE
 def show_tree(main_connect):
     ListDirectoryTree = []
     #Lấy các ổ đĩa của máy tính
-    for c in range(ord('A'), ord('Z') + 1):
+    for c in range(65, 91):
         path = chr(c) + ":\\"
         if os.path.isdir(path):
             ListDirectoryTree.append(path)

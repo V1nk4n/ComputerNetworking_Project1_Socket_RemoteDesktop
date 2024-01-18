@@ -6,28 +6,6 @@ from tkinter import Text, filedialog, messagebox, Frame
 from tkinter import *
 from DC_Constant import BACKGROUND, BUFFERSIZE, WIDTH, HEIGHT, FORMAT, myButton
 
-def list_dir(main_connect, path):
-    #Gửi đừng đi cần nhận folder và file con
-    main_connect.sendall(path.encode())
-    #Nhận size của các folder và file con
-    data_size = int(main_connect.recv(BUFFERSIZE))
-    #Nhận size lỗi
-    if (data_size == -1):
-        messagebox.showerror(message = "Click SHOW button again to update and watch the new directory tree!")
-        return []
-    #Báo nhận size thanh cong
-    main_connect.sendall("Receive size successfully".encode())
-    #NHận dữ liệu các folder và file con
-    data = b""
-    while len(data) < data_size:
-        packet = main_connect.recv(BUFFERSIZE)
-        data += packet
-    if (data == "error"):
-        messagebox.showerror(message = "Error! Cannot open this directory.")
-        return []
-    #Chuyển từ bytes sang folder và file binh thường
-    loaded_list = pickle.loads(data)
-    return loaded_list
 
 class DirectoryTree(Frame):
     def __init__(self, window, main_connect):
@@ -44,7 +22,7 @@ class DirectoryTree(Frame):
         window.geometry("900x500+200+200")
         self.grid(row=0, column=0, sticky="nsew")
         self.status = True
-
+        self.stop = True
         self.main_connect =  main_connect
         self.curPath = " "
         self.nodes = dict()
@@ -104,6 +82,28 @@ class DirectoryTree(Frame):
         self.button_back = myButton(self)
         self.button_back.configure(text='BACK', command=self.click_back, relief="flat")
         self.button_back.place(x=636,y=385,width=150,height=53)
+    def list_dir(self, main_connect, path):
+        #Gửi đừng đi cần nhận folder và file con
+        main_connect.sendall(path.encode())
+        #Nhận size của các folder và file con
+        data_size = int(main_connect.recv(BUFFERSIZE))
+        #Nhận size lỗi
+        if (data_size == -1):
+            messagebox.showerror(message = "Click SHOW button again to update and watch the new directory tree!")
+            return []
+        #Báo nhận size thanh cong
+        main_connect.sendall("Receive size successfully".encode())
+        #NHận dữ liệu các folder và file con
+        data = b""
+        while len(data) < data_size:
+            packet = main_connect.recv(BUFFERSIZE)
+            data += packet
+        if (data == "error"):
+            messagebox.showerror(message = "Error! Cannot open this directory.")
+            return []
+        #Chuyển từ bytes sang folder và file binh thường
+        loaded_list = pickle.loads(data)
+        return loaded_list
 
     def insert_node(self, parent, text, abspath, isFolder):
         #Thêm node vào cuối cây chỉ có text
@@ -125,7 +125,7 @@ class DirectoryTree(Frame):
             self.tree.delete(self.tree.get_children(node))
             try:
                 #Lấy danh sách folder và file con sau đó thêm vào cây
-                dirs = list_dir(self.main_connect, absPath)
+                dirs = self.list_dir(self.main_connect, absPath)
                 for p in dirs:
                     self.insert_node(node, p[0], os.path.join(absPath, p[0]), p[1])
             except:
@@ -183,8 +183,12 @@ class DirectoryTree(Frame):
                 self.insert_node('', abspath, abspath, True)
             except:
                 continue
+        self.stop=True
 
     def send_file(self):
+        if(self.stop == False):
+            messagebox.showerror(message = "Click SHOW button again to update and watch the new directory tree!")
+            return
         self.main_connect.sendall("SEND".encode())
         isOk = self.main_connect.recv(BUFFERSIZE).decode()
         if (isOk == "OK"):
@@ -212,12 +216,16 @@ class DirectoryTree(Frame):
                     self.main_connect.sendall("-1".encode())
                 isReceivedContent = self.main_connect.recv(BUFFERSIZE).decode()
                 if (isReceivedContent == "received content"):
-                    messagebox.showinfo(message = "Copy file successfully!")
+                    self.stop = False
+                    messagebox.showinfo(message = "Send file successfully!")
                     return True
         messagebox.showerror(message = "Error! Cannot copy file.")    
         return False
 
     def copy_file(self):
+        if(self.stop == False):
+            messagebox.showerror(message = "Click SHOW button again to update and watch the new directory tree!")
+            return
         self.main_connect.sendall("COPY".encode())
         isOk = self.main_connect.recv(BUFFERSIZE).decode()
         if (isOk == "OK"):
@@ -246,6 +254,7 @@ class DirectoryTree(Frame):
                 #Tạo ra file và ghi dữ liệu vào
                 with open(destPath + "\\" + filename, "wb") as f:
                     f.write(data)
+                self.stop = False
                 messagebox.showinfo(message = "Copy file successfully!")
             except:
                 messagebox.showerror(message = "Error! Cannot copy file.")  
@@ -253,6 +262,9 @@ class DirectoryTree(Frame):
             messagebox.showerror(message = "Error! Cannot copy file.") 
 
     def delete_file(self):
+        if(self.stop == False):
+            messagebox.showerror(message = "Click SHOW button again to update and watch the new directory tree!")
+            return
         self.main_connect.sendall("DEL".encode())
         isOk = self.main_connect.recv(BUFFERSIZE).decode()
         if (isOk == "OK"):
@@ -261,6 +273,7 @@ class DirectoryTree(Frame):
             #Nhận thông tin xóa thành công hay không
             res = self.main_connect.recv(BUFFERSIZE).decode()
             if (res == "ok"):
+                self.stop = False
                 messagebox.showinfo(message = "Delete file successfully!")
             else:
                 messagebox.showerror(message = "Error! Cannot delete file.") 
