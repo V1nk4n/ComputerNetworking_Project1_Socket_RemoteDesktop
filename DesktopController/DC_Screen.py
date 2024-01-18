@@ -30,7 +30,7 @@ class Screen(Frame):
         self.label.place(x=30, y=0, width=WIDTH-60, height=HEIGHT-60)
         
         self.button_shot = myButton(self)
-        self.button_shot.configure(text="Save", command=lambda: self.click_shot())
+        self.button_shot.configure(text="Shot", command=lambda: self.click_shot())
         self.button_shot.place(x=167, y=HEIGHT-40, width=200, height=30)
 
         self.button_back = myButton(self)
