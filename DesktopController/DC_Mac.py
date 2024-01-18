@@ -14,8 +14,6 @@ def mac_addr(main_connect):
         box = tk.Tk()
         box.configure(
             bg=BACKGROUND,
-            height=HEIGHT,
-            width=WIDTH,
             bd=0,
             highlightthickness=0,
             relief="ridge",
@@ -32,7 +30,7 @@ def mac_addr(main_connect):
             borderwidth=2,
             highlightthickness=2,
         )
-        ip_label.place(x=25, y=20)
+        ip_label.place(x=40, y=20)
     except:
         message = "Check the connection again"
         tk.messagebox.showerror(title='MAC Address', message=message)
