@@ -111,7 +111,6 @@ def MouseControlled(mouse_con):
         #Nếu lệnh là cuộn
         if command == "scroll":
             x, y = int(x), int(y)
-            print("Scroll ",x,y)
             pag.scroll(x)
         mouse_con.sendall(buffer.encode())
         #Dọn buffer
