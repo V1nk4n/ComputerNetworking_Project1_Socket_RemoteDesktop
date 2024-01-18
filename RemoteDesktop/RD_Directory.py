@@ -61,7 +61,6 @@ def delete_file(directoryConnection):
         directoryConnection.sendall("error".encode())
         return
 
-# copy file from client to server
 def send_file(main_connect):
     #Nhận tên file, kích cỡ của file, folder để lưu file
     received = main_connect.recv(BUFFERSIZE).decode()
@@ -119,13 +118,11 @@ def directory(main_connect):
                         isMod = True
                         break
         
-        # copy file from client to server
         elif (mod == "SEND"):
             main_connect.sendall("OK".encode())
             send_file(main_connect)
             isMod = False
 
-        # copy file from server to client
         elif (mod == "COPY"):
             main_connect.sendall("OK".encode())
             copy_file(main_connect)
