@@ -24,14 +24,14 @@ class Screen(Frame):
 
         self.status = True
 
-        self.on_save = False
+        self.on_shot = False
 
         self.label = tk.Label(self)
         self.label.place(x=30, y=0, width=WIDTH-60, height=HEIGHT-60)
         
-        self.button_save = myButton(self)
-        self.button_save.configure(text="Save", command=lambda: self.click_save())
-        self.button_save.place(x=167, y=HEIGHT-40, width=200, height=30)
+        self.button_shot = myButton(self)
+        self.button_shot.configure(text="Save", command=lambda: self.click_shot())
+        self.button_shot.place(x=167, y=HEIGHT-40, width=200, height=30)
 
         self.button_back = myButton(self)
         self.button_back.configure(text="Back", command=lambda: self.click_back())
@@ -65,10 +65,10 @@ class Screen(Frame):
             self.label.configure(image=photo)
             self.label.image = photo
             #Chọn nút lưu ảnh
-            if self.on_save:
+            if self.on_shot:
                 self.frame = image_byte_array
-                self.save_img()
-                self.on_save = False
+                self.screen_shot()
+                self.on_shot = False
             #Chọn nút back
             if self.status:
                 self.screenConnection.sendall("CONTINUE".encode(FORMAT))
@@ -76,13 +76,13 @@ class Screen(Frame):
                 self.screenConnection.sendall("STOP".encode(FORMAT))
         self.destroy()
 
-    def click_save(self):
-        self.on_save = True
+    def click_shot(self):
+        self.on_shot = True
 
     def click_back(self):
         self.status = False
     #Lưu ảnh vào máy Client
-    def save_img(self):
+    def screen_shot(self):
         if self.frame == None:
             return
         types = [("Portable Network Graphics", "*.jpeg"), ("All Files", "*.*")]

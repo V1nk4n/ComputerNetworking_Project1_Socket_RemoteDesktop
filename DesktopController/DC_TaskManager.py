@@ -5,7 +5,7 @@ from tkinter import *
 from tkinter import ttk
 from DC_Constant import BACKGROUND, FORMAT, BUFFERSIZE, WIDTH, HEIGHT, myButton
 
-class AppProcess(Frame):
+class TaskManager(Frame):
     def __init__(self, parent, main_connect):
         Frame.__init__(self, parent)
         self.configure(

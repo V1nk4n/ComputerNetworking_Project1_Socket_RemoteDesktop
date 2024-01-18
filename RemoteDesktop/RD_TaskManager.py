@@ -2,6 +2,7 @@ import os
 import pickle
 import struct
 import subprocess
+import re
 from RD_Constant import BUFFERSIZE
 
 
@@ -28,8 +29,9 @@ def list_processes():
     for i in proc:
         if i == ' ' or i == '':
             continue
+
         print(i)
-        i = i + '0'
+
         list1.append(i[:i.find(' ')])
         
         i = i[i.find(' ') :].strip()
@@ -37,10 +39,19 @@ def list_processes():
         list2.append(i[:i.find(' ')])
         
         i = i[i.find(' '):].strip()
-        list3.append(i[:i.find(' ')])
-        
-        list4.append(i[i.find(' '):].strip(' '))
-        
+
+        position = -1
+        for index, char in enumerate(i):
+            if char == ' ':
+                position = index
+                break
+
+        if position == -1:
+            list3.append(i.strip(' '))
+            list4.append('0')
+        else:
+            list3.append(i[:position].strip(' '))
+            list4.append(i[position:].strip(' '))
 
     return list1, list2, list3, list4
 
@@ -60,11 +71,17 @@ def list_apps():
     for i in apps:
         if i == ' ' or i == '':
             continue
-        print(i)
-        i = i + '0'
-        list1.append(i[:i.find(' ')])
         
-        i = i[i.find(' ') :].strip()
+        print(i)
+        
+        for index, char in enumerate(i):
+            if char.isdigit():
+                position = index
+                break
+
+        list1.append(i[:position].strip(' '))
+        
+        i = i[position:].strip()
         
         list2.append(i[:i.find(' ')])
         
@@ -92,7 +109,7 @@ def start(pname):
     subprocess.Popen(pname)
     return
 
-def app_process(client):
+def task_manager(client):
     global msg
     while True:
         msg = client.recv(BUFFERSIZE).decode("utf8")

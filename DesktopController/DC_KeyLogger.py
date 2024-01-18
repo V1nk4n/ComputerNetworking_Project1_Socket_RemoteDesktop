@@ -17,7 +17,7 @@ class Keylogger(Frame):
         window.geometry("900x500+200+200")
         self.grid(row=0, column=0, sticky="nsew")
 
-        self.connection=main_connect
+        self.main_connect=main_connect
         self.status=True
         
         self.box = Text(
@@ -93,5 +93,5 @@ class Keylogger(Frame):
     def back(self):
         self.status = False
         self.destroy()
-        self.connection.sendall("STOP".encode())
+        self.main_connect.sendall("STOP".encode())
         return

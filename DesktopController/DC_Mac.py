@@ -1,6 +1,6 @@
 import tkinter as tk
 from DC_Constant import BUFFERSIZE, FORMAT
-from DC_Constant import BACKGROUND,WIDTH, HEIGHT
+from DC_Constant import BACKGROUND,WIDTH, HEIGHT, FONT
 
 def mac_addr(main_connect):
     try:
@@ -8,7 +8,7 @@ def mac_addr(main_connect):
         mac = main_connect.recv(BUFFERSIZE).decode(FORMAT)
         #In hoa các ký tự từ vị trí 2 trong mac
         mac = mac[2:].upper()
-        #Chèn : vaof mỗi 2 ký tự
+        #Chèn : vào mỗi 2 ký tự
         mac = ':'.join(mac[i:i + 2] for i in range(0, len(mac), 2))
         
         box = tk.Tk()
@@ -26,13 +26,13 @@ def mac_addr(main_connect):
         ip_label = tk.Label(
             box,
             text="Server's MAC Address: "+mac,
-            font=("Times New Roman",15),
+            font=(FONT,13),
             bg="#fdebd3",
             fg="black",
             borderwidth=2,
             highlightthickness=2,
         )
-        ip_label.place(x=45, y=20)
+        ip_label.place(x=25, y=20)
     except:
         message = "Check the connection again"
         tk.messagebox.showerror(title='MAC Address', message=message)

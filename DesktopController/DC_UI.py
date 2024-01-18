@@ -9,7 +9,7 @@ import DC_Mac as mac
 from DC_Screen import Screen
 from DC_Control import Control
 from DC_KeyLogger import Keylogger
-from DC_AppProcess import AppProcess
+from DC_TaskManager import TaskManager
 from DC_Directory import DirectoryTree
 from DC_Constant import FORMAT, SERVER_PORT
 
@@ -19,14 +19,14 @@ window = Tk()
 window.configure(bg="#000")
 window.title("Remote Desktop Controller")
 window.resizable(False, False)
-login_ui = Login(window)
+login = Login(window)
 
 def back(temp):
     temp.destroy()
-    menu_ui.tkraise()
+    menu.tkraise()
 
-def live_screen():
-    main_connect.sendall("LIVESCREEN".encode(FORMAT))
+def screen_shot():
+    main_connect.sendall("SCREENSHOT".encode(FORMAT))
     screen_con = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     screen_con.connect((IP,SERVER_PORT))
     temp = Screen(window, screen_con)
@@ -41,7 +41,7 @@ def mac_address():
 
 def disconnect():
     main_connect.sendall("QUIT".encode(FORMAT))
-    menu_ui.destroy()
+    menu.destroy()
     window.destroy()
     return
 
@@ -75,9 +75,9 @@ def directory_tree():
         back(temp)
     return
 
-def app_process():
-    main_connect.sendall("PROCESS".encode(FORMAT))
-    temp = AppProcess(window, main_connect)
+def task_manager():
+    main_connect.sendall("TASK".encode(FORMAT))
+    temp = TaskManager(window, main_connect)
     if temp.status == False:
         back(temp)
     return
@@ -87,18 +87,18 @@ def shutdown_logout():
     temp = sot.shutout(window, main_connect)
     return
 
-def show_menu_ui():
-    login_ui.destroy()
-    global menu_ui
-    menu_ui = Menu(window)
-    menu_ui.button_Live_Screen.configure(command=live_screen)
-    menu_ui.button_App_Process.configure(command=app_process)
-    menu_ui.button_Keylogger.configure(command=key_logger)
-    menu_ui.button_Mac_Address.configure(command=mac_address)
-    menu_ui.button_Directory_Tree.configure(command=directory_tree)
-    menu_ui.button_Shut_Down.configure(command=shutdown_logout)
-    menu_ui.button_Control_Desktop.configure(command=control_desktop)
-    menu_ui.button_Disconnect.configure(command=disconnect)
+def show_menu():
+    login.destroy()
+    global menu
+    menu = Menu(window)
+    menu.button_Screen_Shot.configure(command=screen_shot)
+    menu.button_Task_Manager.configure(command=task_manager)
+    menu.button_Keylogger.configure(command=key_logger)
+    menu.button_Mac_Address.configure(command=mac_address)
+    menu.button_Directory_Tree.configure(command=directory_tree)
+    menu.button_Shut_Down.configure(command=shutdown_logout)
+    menu.button_Control_Desktop.configure(command=control_desktop)
+    menu.button_Disconnect.configure(command=disconnect)
     return
 
 def connect(login):
@@ -108,7 +108,7 @@ def connect(login):
     print(IP)
     try:
         main_connect.connect((IP, SERVER_PORT))
-        show_menu_ui()
+        show_menu()
     except Exception as e:
         print(e)
         messagebox.showerror(message="Error in connection!")
@@ -116,7 +116,7 @@ def connect(login):
 
 
 def main():
-    login_ui.connect.configure(command=lambda: connect(login_ui))
+    login.connect.configure(command=lambda: connect(login))
     window.mainloop()
 
 

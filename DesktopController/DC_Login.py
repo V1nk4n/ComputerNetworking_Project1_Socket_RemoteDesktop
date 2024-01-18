@@ -1,5 +1,5 @@
 from tkinter import *
-from DC_Constant import BACKGROUND,WIDTH, HEIGHT, myButton
+from DC_Constant import BACKGROUND,WIDTH, HEIGHT, myButton, FONT
 
 class Login(Frame):
     def __init__(self, parent):
@@ -17,26 +17,26 @@ class Login(Frame):
         self.ip_label = Label(
             self,
             text="Server IP Address",
-            font=("Times New Roman",20),
+            font=(FONT,20),
             bg="#fdebd3",
             fg="black",
             borderwidth=2,
             highlightthickness=2,
         )
-        self.ip_label.place(x=350, y=100)
+        self.ip_label.place(x=320, y=100)
 
         self.ip_input = Entry(
             self,
-            font=("Times New Roman",15),
+            font=(FONT,15),
             bg="white",
             fg="black",
             highlightthickness=2,
             relief="flat",
         )
-        self.ip_input.place(x=300,y=133,width=300,height=50,)
+        self.ip_input.place(x=300,y=133,width=300,height=50)
 
         self.connect = myButton(self)
         self.connect.configure(text="Connect")
-        self.connect.place(x=300,y=316,height=50,width=300,)
+        self.connect.place(x=300,y=316,height=50,width=300)
 
 
